@@ -15,7 +15,7 @@ func main() {
 	ctrl := metadata.New(repo)
 	h := httphandler.New(ctrl)
 	http.Handle("/metadata", http.HandlerFunc(h.GetMetadata))
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8081", nil); err != nil {
 		panic(err)
 	}
 }
