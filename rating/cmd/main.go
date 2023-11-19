@@ -6,12 +6,13 @@ import (
 
 	"movieexample.com/rating/internal/controller/rating"
 	httphandler "movieexample.com/rating/internal/handler/http"
-	"movieexample.com/rating/internal/repository/memory"
+	"movieexample.com/rating/internal/repository/mongoDB"
 )
 
 func main() {
 	log.Println("Starting rating service...")
-	repo := memory.New()
+	db := mongoDB.ConnectDB()
+	repo := mongoDB.NewCollection(db)
 	ctrl := rating.New(repo)
 	h := httphandler.New(ctrl)
 	http.Handle("/rating", http.HandlerFunc(h.Handle))
