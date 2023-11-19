@@ -6,12 +6,15 @@ import (
 
 	"movieexample.com/metadata/internal/controller/metadata"
 	httphandler "movieexample.com/metadata/internal/handler/http"
-	"movieexample.com/metadata/internal/repository/memory"
+	"movieexample.com/metadata/internal/repository/mongoDB"
 )
 
 func main() {
 	log.Println("Starting metadata service...")
-	repo := memory.New()
+	db := mongoDB.NewDatabase()
+	log.Println("Connected to MongoDB")
+	repo := mongoDB.NewCollection(db)
+	log.Println("Connected to Collection")
 	ctrl := metadata.New(repo)
 	h := httphandler.New(ctrl)
 	http.Handle("/metadata", http.HandlerFunc(h.GetMetadata))
