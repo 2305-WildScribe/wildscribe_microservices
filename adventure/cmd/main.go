@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"movieexample.com/adventure/internal/controller/adventure"
+	"movieexample.com/adventure/internal/controller/adventurecontroller"
 	httphandler "movieexample.com/adventure/internal/handler/http"
 	"movieexample.com/adventure/internal/repository/mongoDB"
 )
@@ -26,7 +26,7 @@ func main() {
 
 	log.Println("Connected to Collection")
 
-	ctrl := adventure.New(repo)
+	ctrl := adventurecontroller.New(repo)
 
 	h := httphandler.New(ctrl)
 
