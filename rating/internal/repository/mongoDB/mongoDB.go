@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"movieexample.com/metadata/internal/config"
-	"movieexample.com/metadata/pkg/model"
+	"movieexample.com/rating/internal/config"
+	"movieexample.com/rating/pkg/model"
 )
 
 // Set Database stuct
@@ -50,15 +50,15 @@ func ConnectDB() *Database {
 // Sets the collection to "metadata"
 func NewCollection(db *Database) *Collection {
 	return &Collection{
-		collection: db.db.Database("micro_service_db").Collection("metadata"),
+		collection: db.db.Database("micro_service_db").Collection("rating"),
 	}
 }
 
 // Set metadata model
-var metadata model.Metadata
+var metadata model.Rating
 
 // Get a single collection from the ID, bind & return metadata model.
-func (c *Collection) Get(ctx context.Context, id string) (*model.Metadata, error) {
+func (c *Collection) Get(ctx context.Context, id string) (*model.Rating, error) {
 	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		log.Printf("Invalid ObjID: %v\n", err)

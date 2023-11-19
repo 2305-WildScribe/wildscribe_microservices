@@ -1,1 +1,2 @@
-/.env
+/metadata/cmd/.env
+/rating/cmd/.env

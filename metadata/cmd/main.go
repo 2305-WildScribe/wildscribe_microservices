@@ -11,7 +11,7 @@ import (
 
 func main() {
 	log.Println("Starting metadata service...")
-	db := mongoDB.NewDatabase()
+	db := mongoDB.ConnectDB()
 	log.Println("Connected to MongoDB")
 	repo := mongoDB.NewCollection(db)
 	log.Println("Connected to Collection")
