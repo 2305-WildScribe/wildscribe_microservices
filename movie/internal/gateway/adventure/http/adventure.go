@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"movieexample.com/metadata/pkg/model"
+	"movieexample.com/adventure/pkg/model"
 	"movieexample.com/movie/internal/gateway"
 )
 
@@ -21,7 +21,7 @@ func New(addr string) *Gateway {
 }
 
 // Get gets movie metadata for a given movie ID.
-func (g *Gateway) Get(ctx context.Context, id string) (*model.Metadata, error) {
+func (g *Gateway) Get(ctx context.Context, id string) (*model.Adventure, error) {
 	req, err := http.NewRequest(http.MethodGet, g.addr+"/metadata", nil)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (g *Gateway) Get(ctx context.Context, id string) (*model.Metadata, error) {
 	} else if resp.StatusCode/100 != 2 {
 		return nil, fmt.Errorf("non-2xx response: %v", resp)
 	}
-	var v *model.Metadata
+	var v *model.Adventure
 	if err := json.NewDecoder(resp.Body).Decode(&v); err != nil {
 		return nil, err
 	}

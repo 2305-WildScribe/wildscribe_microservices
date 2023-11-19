@@ -2,6 +2,8 @@ module wildscribe.com
 
 go 1.21.3
 
+require go.mongodb.org/mongo-driver v1.13.0
+
 require (
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
