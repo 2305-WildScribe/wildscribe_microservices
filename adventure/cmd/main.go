@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"movieexample.com/adventure/internal/controller/adventurecontroller"
-	httphandler "movieexample.com/adventure/internal/handler/http"
-	"movieexample.com/adventure/internal/repository/mongoDB"
+	"wildscribe.com/adventure/internal/controller/adventurecontroller"
+	httphandler "wildscribe.com/adventure/internal/handler/http"
+	"wildscribe.com/adventure/internal/repository/mongoDB"
 )
 
 func main() {

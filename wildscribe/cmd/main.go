@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"movieexample.com/movie/internal/controller/movie"
-	adventuregateway "movieexample.com/movie/internal/gateway/adventure/http"
-	ratinggateway "movieexample.com/movie/internal/gateway/rating/http"
-	httphandler "movieexample.com/movie/internal/handler/http"
+	"wildscribe.com/wildscribe/internal/controller/user"
+	adventuregateway "wildscribe.com/wildscribe/internal/gateway/adventure/http"
+	ratinggateway "wildscribe.com/wildscribe/internal/gateway/user/http"
+	httphandler "wildscribe.com/wildscribe/internal/handler/http"
 )
 
 func main() {

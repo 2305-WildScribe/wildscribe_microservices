@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"movieexample.com/adventure/internal/config"
-	"movieexample.com/adventure/pkg/model"
+	"wildscribe.com/adventure/internal/config"
+	"wildscribe.com/adventure/pkg/model"
 )
 
 // Set Database stuct

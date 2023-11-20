@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"movieexample.com/adventure/internal/controller/adventurecontroller"
-	"movieexample.com/adventure/internal/repository"
+	"wildscribe.com/adventure/internal/controller/adventurecontroller"
+	"wildscribe.com/adventure/internal/repository"
 )
 
 // Handler defines a movie adventure HTTP handler.
