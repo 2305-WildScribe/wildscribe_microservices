@@ -1,34 +1,35 @@
-package movie
+package user
 
 import (
 	"context"
 	"errors"
 
-	adventuremodel "wildscribe.com/adventure/pkg/model"
-	"wildscribe.com/user/internal/request"
-	usermodel "wildscribe.com/user/pkg/model"
-	"wildscribe.com/wildscribe/internal/gateway"
-	"wildscribe.com/wildscribe/pkg/model"
+	"wildscribe.com/user/pkg/model"
+	"wildscribe.com/wildscribe/internal/request"
 )
 
 var ErrNotFound = errors.New("not found")
 
 type userGateway interface {
-	Get(ctx context.Context, id string) (*adventuremodel.Adventure, error)
+	GetUser(ctx context.Context, request request.UserRequest) (*model.User, error)
 }
 
-// Controller defines a movie service controller.
+// Controller defines a user service controller.
 type Controller struct {
 	userGateway userGateway
 }
 
-// New creates a new movie service controller.
-func New(ratingGateway userGateway) *Controller {
-	return &Controller{ratingGateway}
+// New creates a new user service controller.
+func New(gateway userGateway) *Controller {
+	return &Controller{gateway}
 }
 
-// Get returns movie details including aggregated rating and movie adventure for a given movie ID.
+// Get returns user details including aggregated rating and user adventure for a given user ID.
 func (c *Controller) Get(ctx context.Context, request request.UserRequest) (*model.User, error) {
-	email, password := request.Email, request.Password
-	user, err := c.userGateway.GetUser(email, password)
+	var user *model.User
+	user, err := c.userGateway.GetUser(ctx, request)
+	if err != nil {
+		return user, err
+	}
+	return user, err
 }

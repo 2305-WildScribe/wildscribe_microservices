@@ -34,6 +34,7 @@ func (c *Controller) Get(ctx context.Context, request request.UserRequest) (*mod
 	if err != nil {
 		return nil, err
 	}
+
 	if bcrypt_middleware.ComparePasswords(user.Password, password) == false {
 		return nil, err
 	}
