@@ -1,38 +1,54 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
-
-	"wildscribe.com/adventure/internal/controller/adventurecontroller"
-	httphandler "wildscribe.com/adventure/internal/handler/http"
+	"os"
+	"wildscribe.com/adventure/internal/controller/adventure"
+	"wildscribe.com/adventure/internal/handler/gin_handler"
 	"wildscribe.com/adventure/internal/repository/mongoDB"
+	"wildscribe.com/adventure/internal/routes"
 )
 
 func main() {
-	log.Println("Starting adventure service...")
+	var port string
+	log.Println("Starting wildscribe adventure service...")
+	env := os.Getenv("ENV")
 
-	db, err := mongoDB.ConnectDB()
-	if err != nil {
-		log.Fatal("Failed to connect to MongoDB:", err)
+	if env == "PROD" {
+		port = os.Getenv("PORT")
+	} else {
+
+		// f, err := os.Open("configs/base.yml")
+
+		// if err != nil {
+		// 	panic(err)
+		// }
+
+		// defer f.Close()
+
+		// var cfg ServiceConfig
+
+		// if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {
+		// 	panic(err)
+		// }
+		port = "8082"
 	}
 
-	log.Println("Connected to MongoDB")
+	route := fmt.Sprintf("0.0.0.0:%s", port)
+
+	router := gin.Default()
+
+	db := mongoDB.ConnectDB()
 
 	repo := mongoDB.NewCollection(db)
-	if repo == nil {
-		log.Fatal("Failed to connect to Collection")
-	}
 
-	log.Println("Connected to Collection")
+	ctrl := adventure.New(repo)
 
-	ctrl := adventurecontroller.New(repo)
+	handler := gin_handler.New(ctrl)
 
-	h := httphandler.New(ctrl)
+	routes.AdventureRoutes(router, handler)
 
-	http.Handle("/adventure", http.HandlerFunc(h.GetAdventure))
-
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		log.Fatal("Error starting HTTP server:", err)
-	}
+	router.Run(route)
 }

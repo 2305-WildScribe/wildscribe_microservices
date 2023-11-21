@@ -3,13 +3,11 @@ package mongoDB
 import (
 	"context"
 	"fmt"
-	"log"
-	"time"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"wildscribe.com/adventure/internal/config"
 	"wildscribe.com/adventure/pkg/model"
 )
@@ -25,38 +23,29 @@ type Collection struct {
 }
 
 // Connects to MongoDB
-func ConnectDB() (*Database, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(config.EnvMongoURI()))
+func ConnectDB() *Database {
+	clientOptions := options.Client().ApplyURI(config.EnvMongoURI())
+
+	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	err = client.Connect(ctx)
+	err = client.Ping(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
-	}
-
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
 	}
 
 	fmt.Println("Connected to MongoDB")
 	return &Database{
 		db: client,
-	}, nil
+	}
 }
 
-// Sets the collection to "adventure"
+// Sets the collection to "metadata"
 func NewCollection(db *Database) *Collection {
 	return &Collection{
-		collection: db.db.Database("micro_service_db").Collection("adventure"),
+		collection: db.db.Database("golangAPI").Collection("adventures"),
 	}
 }
 
@@ -64,15 +53,13 @@ func NewCollection(db *Database) *Collection {
 var adventure model.Adventure
 
 // Get a single collection from the ID, bind & return adventure model.
-func (c *Collection) Get(ctx context.Context, id string) (*model.Adventure, error) {
+func (c *Collection) GetOne(ctx context.Context, id string) (*model.Adventure, error) {
 	objId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		log.Printf("Invalid ObjID: %v\n", err)
-	}
 	filter := bson.D{{Key: "_id", Value: objId}}
 	result := c.collection.FindOne(ctx, filter).Decode(&adventure)
 	if result != nil {
 		log.Printf("MongoDB error: %v\n", err)
+		return nil, err
 	}
-	return &adventure, err
+	return &adventure, nil
 }
