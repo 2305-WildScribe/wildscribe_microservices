@@ -1,9 +1,11 @@
 package model
 
-import "wildscribe.com/adventure/pkg/model"
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
-// MovieDetails includes movie metadata and its aggregated ratings.
-type MovieDetails struct {
-	Rating    *float64        `json:"rating,omitempty"`
-	Adventure model.Adventure `json:"adventure"`
+// User Model with UserID, and Name.
+type User struct {
+	UserID   primitive.ObjectID `json:"user_id"`
+	Name     string             `json:"name,omitempty"`
+	Email    string             `json:"email,omitempty"`
+	Password string             `json:"password,omitempty"`
 }
