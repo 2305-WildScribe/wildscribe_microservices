@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"movieexample.com/adventure/pkg/model"
-	"movieexample.com/movie/internal/gateway"
+	"wildscribe.com/adventure/pkg/model"
+	"wildscribe.com/wildscribe/internal/gateway"
 )
 
 // Gateway defines movie metadata HTTP gateway.
@@ -46,4 +46,3 @@ func (g *Gateway) Get(ctx context.Context, id string) (*model.Adventure, error) 
 	}
 	return v, nil
 }
-

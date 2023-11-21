@@ -2,11 +2,11 @@ package http
 
 import (
 	"encoding/json"
-	"net/http"
-	"log"
 	"errors"
+	"log"
+	"net/http"
 
-	"movieexample.com/movie/internal/controller/movie"
+	"wildscribe.com/wildscribe/internal/controller/user"
 )
 
 // Handler defines a movie HTTP handler.
@@ -19,8 +19,7 @@ func New(ctrl *movie.Controller) *Handler {
 	return &Handler{ctrl}
 }
 
-// GetMovieDetails handles GET /movie requests.
-func (h *Handler) GetMovieDetails(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) Get(w http.ResponseWriter, req *http.Request) {
 	id := req.FormValue("id")
 	details, err := h.ctrl.Get(req.Context(), id)
 	if err != nil && errors.Is(err, movie.ErrNotFound) {

@@ -4,17 +4,15 @@ import (
 	"context"
 	"errors"
 
-	adventuremodel "movieexample.com/adventure/pkg/model"
-	"movieexample.com/movie/internal/gateway"
-	"movieexample.com/movie/pkg/model"
-	ratingmodel "movieexample.com/rating/pkg/model"
+	adventuremodel "wildscribe.com/adventure/pkg/model"
+	usermodel "wildscribe.com/user/pkg/model"
+	"wildscribe.com/wildscribe/internal/gateway"
+	"wildscribe.com/wildscribe/pkg/model"
 )
 
 var ErrNotFound = errors.New("not found")
 
-type ratingGateway interface {
-	GetAggregatedRating(ctx context.Context, recordID ratingmodel.RecordID, recordType ratingmodel.RecordType) (float64, error)
-	PutRating(ctx context.Context, recordID ratingmodel.RecordID, recordType ratingmodel.RecordType, rating *ratingmodel.Rating) error
+type userGateway interface {
 }
 
 type adventureGateway interface {
@@ -23,12 +21,12 @@ type adventureGateway interface {
 
 // Controller defines a movie service controller.
 type Controller struct {
-	ratingGateway   ratingGateway
+	ratingGateway    userGateway
 	adventureGateway adventureGateway
 }
 
 // New creates a new movie service controller.
-func New(ratingGateway ratingGateway, adventureGateway adventureGateway) *Controller {
+func New(ratingGateway userGateway, adventureGateway adventureGateway) *Controller {
 	return &Controller{ratingGateway, adventureGateway}
 }
 
