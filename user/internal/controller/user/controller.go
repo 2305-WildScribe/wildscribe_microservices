@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-
 	"wildscribe.com/user/internal/middleware/bcrypt_middleware"
 	"wildscribe.com/user/internal/request"
 	"wildscribe.com/user/pkg/model"
@@ -27,6 +26,8 @@ func New(repo userRepository) *Controller {
 }
 
 func (c *Controller) Get(ctx context.Context, request request.UserRequest) (*model.User, error) {
+
+	// Sets email and password variables, password must be []byte for bcrypt use
 	email := request.Data.Attributes.Email
 	password := []byte(request.Data.Attributes.Password)
 

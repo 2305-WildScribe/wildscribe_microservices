@@ -11,12 +11,12 @@ import (
 	"wildscribe.com/wildscribe/internal/request"
 )
 
-// Gateway defines movie rating HTTP gateway.
+// Gateway defines the User microserive HTTP gateway.
 type Gateway struct {
 	addr string
 }
 
-// New creates a new movie rating HTTP gateway.
+// New creates a new User microservice HTTP gateway.
 func New(addr string) *Gateway {
 	return &Gateway{addr}
 }
@@ -24,7 +24,7 @@ func New(addr string) *Gateway {
 func (g *Gateway) GetUser(ctx context.Context, request request.UserRequest) (*model.User, error) {
 	var user model.User
 
-	// Convert the data map to JSON
+	// Convert the User request to JSON
 	jsonData, err := json.Marshal(request)
 	if err != nil {
 		return nil, err

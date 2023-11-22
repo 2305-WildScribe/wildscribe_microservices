@@ -39,13 +39,12 @@ func (h *Handler) GetUser() gin.HandlerFunc {
 		if err != nil {
 			userResponse.Data.Error = "Invalid Email / Password"
 			userResponse.Data.Type = "user"
-			userResponse.Data.Attributes = map[string]interface{}{"email": userRequest.Data.Attributes.Email, "password": userRequest.Data.Attributes.Password}
+			userResponse.Data.Attributes = user
 			c.JSON(http.StatusUnauthorized, userResponse)
 			return
 		}
-
 		userResponse.Data.Type = "user"
-		userResponse.Data.Attributes = map[string]interface{}{"name": user.Name, "user_id": user.User_id}
+		userResponse.Data.Attributes = user
 		c.JSON(http.StatusOK, userResponse)
 	}
 }

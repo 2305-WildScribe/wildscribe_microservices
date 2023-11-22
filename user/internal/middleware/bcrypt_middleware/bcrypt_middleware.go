@@ -4,7 +4,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func hashAndSalt(pwd []byte) string {
+func HashAndSalt(pwd []byte) string {
 	// Use GenerateFromPassword to hash & salt pwd.
 	// MinCost is just an integer constant provided by the bcrypt
 	// package along with DefaultCost & MaxCost.
