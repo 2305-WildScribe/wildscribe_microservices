@@ -11,7 +11,5 @@ func UserRoute(router *gin.Engine, handler *gin_handler.Handler) {
 			"data": "WILDSCRIBE 2305",
 		})
 	})
-
 	router.POST("/user", handler.GetUser())
-
 }

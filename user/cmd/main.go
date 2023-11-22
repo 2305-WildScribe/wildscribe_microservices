@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	// "gopkg.in/yaml.v3"
 	"log"
+	"os"
 	"wildscribe.com/user/internal/controller/user"
 	"wildscribe.com/user/internal/handler/gin_handler"
 	"wildscribe.com/user/internal/repository/mongoDB"
@@ -10,9 +13,33 @@ import (
 )
 
 func main() {
+	var port string
+	log.Println("Starting wildscribe user service...")
+	env := os.Getenv("ENV")
+
+	if env == "PROD" {
+		port = os.Getenv("PORT")
+	} else {
+
+		// f, err := os.Open("configs/base.yml")
+
+		// if err != nil {
+		// 	panic(err)
+		// }
+
+		// defer f.Close()
+
+		// var cfg ServiceConfig
+
+		// if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {
+		// 	panic(err)
+		// }
+		port = "8081"
+	}
+
+	route := fmt.Sprintf("0.0.0.0:%s", port)
 
 	router := gin.Default()
-	log.Println("Starting rating service...")
 
 	db := mongoDB.ConnectDB()
 
@@ -24,5 +51,5 @@ func main() {
 
 	routes.UserRoute(router, handler)
 
-	router.Run("localhost:6000")
+	router.Run(route)
 }
