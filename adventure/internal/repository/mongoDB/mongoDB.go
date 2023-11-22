@@ -63,3 +63,42 @@ func (c *Collection) GetOne(ctx context.Context, id string) (*model.Adventure, e
 	}
 	return &adventure, nil
 }
+
+// Create a new adventure
+func (c *Collection) Create(ctx context.Context, adventure *model.Adventure) error {
+	_, err := c.collection.InsertOne(ctx, adventure)
+	if err != nil {
+			log.Printf("MongoDB error: %v\n", err)
+			return err
+	}
+	return nil
+}
+
+// Update an adventure
+func (c *Collection) Update(ctx context.Context, updatedAdventure *model.Adventure) error {
+	filter := bson.D{{Key: "_id", Value: updatedAdventure.Adventure_id}}
+	update := bson.D{{Key: "$set", Value: updatedAdventure}}
+	_, err := c.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+			log.Printf("MongoDB error: %v\n", err)
+			return err
+	}
+	return nil
+}
+
+// Delete an adventure
+func (c *Collection) Delete(ctx context.Context, id string) error {
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Printf("Failed to convert ID to ObjectID: %v\n", err)
+		return err
+	}
+	filter := bson.D{{Key: "_id", Value: objID}}
+	_, err = c.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.Printf("MongoDB error: %v\n", err)
+		return err
+	}
+	return nil
+}
+

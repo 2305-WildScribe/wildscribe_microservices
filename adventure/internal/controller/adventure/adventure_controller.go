@@ -11,6 +11,9 @@ var ErrNotFound = errors.New("not found")
 
 type adventureRepository interface {
 	GetOne(ctx context.Context, id string) (*model.Adventure, error)
+	Create(ctx context.Context, adventure *model.Adventure) error
+	Update(ctx context.Context, adventure *model.Adventure) error
+	Delete(ctx context.Context, id string) error
 }
 
 // Conrtoller defines a adventure service controller.
