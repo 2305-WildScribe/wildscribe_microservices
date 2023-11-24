@@ -1,20 +1,26 @@
 package main
 
 import (
-	"log"
-	// "net/http"
 	"fmt"
+	"google.golang.org/grpc"
+	"log"
+	"net"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"wildscribe.com/wildscribe/internal/controller"
+	grpchandler "wildscribe.com/wildscribe/internal/handler/grpc"
 
-	"wildscribe.com/wildscribe/internal/controller/adventure"
-	"wildscribe.com/wildscribe/internal/controller/user"
-	"wildscribe.com/wildscribe/internal/routes"
-
+	// "wildscribe.com/internal/grpcutil"
+	// "wildscribe.com/wildscribe/internal/controller/adventure"
+	// "wildscribe.com/wildscribe/internal/controller/user"
 	"github.com/gin-gonic/gin"
-
-	adventuregateway "wildscribe.com/wildscribe/internal/gateway/adventure/http"
+	"wildscribe.com/gen"
+	adventuregateway "wildscribe.com/wildscribe/internal/gateway/adventure/grpc"
 	usergateway "wildscribe.com/wildscribe/internal/gateway/user/http"
-	ginhandler "wildscribe.com/wildscribe/internal/handler/gin_handler"
+	"wildscribe.com/wildscribe/internal/handler/gin_handler"
+	"wildscribe.com/wildscribe/internal/routes"
 )
 
 func main() {
@@ -41,45 +47,83 @@ func main() {
 		// }
 		port = "8080"
 	}
+	// Adventure grpc gateway setup
+	log.Println("Setting up Adventure Gateway")
+	adventureGateway := adventuregateway.NewAdvGrpcGateway()
+	log.Println("Done!")
+	// User grpc gateway setup
+	log.Println("Setting up User Gateway")
+	userGateway := usergateway.New("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
+	log.Println("Done!")
+	// Setup controller for main func
+	log.Println("Setting controller")
+	ctrl := controller.New(adventureGateway, userGateway)
+	log.Println("Done!")
 
-	route := fmt.Sprintf("0.0.0.0:%s", port)
+	// Setup Gin router for main controller
+	address := "0.0.0.0"
+	route := fmt.Sprintf("%s:%s", address, port)
+
+	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
 
 	router := gin.Default()
 
-	log.Println("Connecting to Wildscribe adventure microservice service")
-
-	// Sets current Adventure Gateway address
-	adventureGateway := adventuregateway.New("https://wildscribe-adventure-service-4dfd475e9dcd.herokuapp.com")
-
-	// Setup Adventure Controller
-	advctrl := adventure.New(adventureGateway)
-
-	// Setup Adventure HTTP Handler
-	advhandler := ginhandler.NewAdvHandler(advctrl)
-
-	// Setup Adventure Routes
-	routes.AdventureRoutes(router, advhandler)
-
+	log.Println("Setting handler")
+	handler := gin_handler.NewGinHandler(ctrl)
 	log.Println("Done!")
 
-	log.Println("Connecting to Wildscribe user microservice")
-
-	// Sets current User Gateway address
-	userGateway := usergateway.New("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
-
-	// Setup User Controller
-	userctrl := user.New(userGateway)
-
-	// Setup User HTTP Handler
-	userhandler := ginhandler.NewUserHandler(userctrl)
-
-	// Setup User Routes
-	routes.UserRoutes(router, userhandler)
-
+	log.Println("Setting routes")
+	routes.Routes(router, handler)
 	log.Println("Done!")
+	server := &http.Server{
+		Addr:    route,
+		Handler: router,
+	}
+	go func() {
+		log.Println("Starting HTTP service")
 
-	log.Println("Starting Wildscribe Router!")
-	router.Run(route)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("HTTP server startup failed: %v", err)
+		}
+	}()
 
-	log.Println("Done! Wildscribe is Live!")
+	srv := grpc.NewServer()
+
+	go func() {
+		log.Println("Setting up gRPC handler")
+		ghandler := grpchandler.New(ctrl)
+		log.Println("Done!")
+
+		log.Println("Setting up gRPC listen address")
+		lis, err := net.Listen("tcp", "localhost:8083")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		log.Println("Done!")
+
+		log.Println("Setting up gRPC server")
+		log.Println("Done!")
+
+		log.Println("Starting up gRPC server")
+		gen.RegisterAdventureServiceServer(srv, ghandler)
+		if err := srv.Serve(lis); err != nil {
+			log.Fatalf("gRPC server failed to serve: %v", err)
+		}
+		log.Println("gRPC server stopped")
+	}()
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+	<-interrupt
+
+	// Gracefully shut down the HTTP server
+	log.Println("Stopping HTTP service")
+	if err := server.Close(); err != nil {
+		log.Fatalf("HTTP server shutdown failed: %v", err)
+	}
+	log.Println("HTTP service gracefully stopped")
+
+	// Gracefully shut down the gRPC server
+	log.Println("Stopping gRPC server")
+	srv.GracefulStop()
+	log.Println("gRPC server gracefully stopped")
 }

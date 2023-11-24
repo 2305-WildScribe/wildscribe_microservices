@@ -17,19 +17,21 @@ type Adventure struct {
 	Beta_notes           string `json:"beta_notes,omitempty"`
 }
 
-func NewAdventure(request request.GatewayAdventureRequest) *Adventure {
+func NewAdventure(request request.AdventureRequest) *Adventure {
+	attributes := request.GetAttributes()
+
 	return &Adventure{
-		User_id:              request.Data.Attributes[0].User_id,
-		Adventure_id:         request.Data.Attributes[0].Adventure_id,
-		Activity:             request.Data.Attributes[0].Activity,
-		Date:                 request.Data.Attributes[0].Date,
-		Image_url:            request.Data.Attributes[0].Image_url,
-		Stress_level:         request.Data.Attributes[0].Stress_level,
-		Hours_slept:          request.Data.Attributes[0].Hours_slept,
-		Sleep_stress_notes:   request.Data.Attributes[0].Sleep_stress_notes,
-		Hydration:            request.Data.Attributes[0].Hydration,
-		Diet:                 request.Data.Attributes[0].Diet,
-		Diet_hydration_notes: request.Data.Attributes[0].Diet_hydration_notes,
-		Beta_notes:           request.Data.Attributes[0].Beta_notes,
+		User_id:              attributes.User_id,
+		Adventure_id:         attributes.Adventure_id,
+		Activity:             attributes.Activity,
+		Date:                 attributes.Date,
+		Image_url:            attributes.Image_url,
+		Stress_level:         attributes.Stress_level,
+		Hours_slept:          attributes.Hours_slept,
+		Sleep_stress_notes:   attributes.Sleep_stress_notes,
+		Hydration:            attributes.Hydration,
+		Diet:                 attributes.Diet,
+		Diet_hydration_notes: attributes.Diet_hydration_notes,
+		Beta_notes:           attributes.Beta_notes,
 	}
 }

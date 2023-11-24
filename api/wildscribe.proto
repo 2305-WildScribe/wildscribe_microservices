@@ -1,0 +1,43 @@
+syntax = "proto3";
+option go_package = "/gen";
+message Adventure {
+    string adventure_id = 1;
+    string user_id = 2;
+    string activity = 3;
+    string date = 4;
+    string image_url = 5;
+    string stress_level = 6;
+    int32 hours_slept = 7;
+    string sleep_stress_notes = 8;
+    string hydration = 9;
+    string diet= 10;
+    string diet_hydration_notes = 11;
+    string beta_notes = 12;
+}
+
+service AdventureService {
+    rpc GetAdventure(GetAdventureRequest) returns
+(GetAdventureResponse);
+    rpc PutAdventure(PutAdventureRequest) returns
+(PutAdventureResponse);
+}
+
+message GetAdventureRequest {
+    string adventure_id = 1;
+}
+message GetAdventureResponse {
+    Adventure adventure = 1;
+}
+message PutAdventureRequest {
+    string adventure = 1;
+}
+message PutAdventureResponse {
+    Adventure adventure = 1;
+}
+
+message User {
+    string user_id = 1;
+    string email = 2;
+    string password = 3;
+    string name = 4;
+}

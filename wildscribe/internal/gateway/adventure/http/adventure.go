@@ -24,7 +24,7 @@ func New(addr string) *Gateway {
 // Get gets movie metadata for a given movie ID.
 
 func (g *Gateway) GetAdventure(ctx context.Context, gateway_request request.AdventureRequest) (*model.Adventure, error) {
-	var adventureResponse request.GatewayAdventureRequest
+	var adventureResponse request.AdventureRequest
 	// Convert the data map to JSON
 	jsonData, err := json.Marshal(gateway_request)
 	if err != nil {
@@ -52,7 +52,11 @@ func (g *Gateway) GetAdventure(ctx context.Context, gateway_request request.Adve
 	if err != nil {
 		return nil, err
 	}
-
+	var data map[string]interface{}
+	if err := json.Unmarshal([]byte(body), &data); err != nil {
+		log.Println("Error:", err)
+		return nil, err
+	}
 	log.Printf("Raw JSON Response: %s", body)
 
 	if err := json.Unmarshal(body, &adventureResponse); err != nil {

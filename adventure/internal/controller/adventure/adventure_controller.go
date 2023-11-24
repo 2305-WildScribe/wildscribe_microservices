@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"wildscribe.com/adventure/internal/request"
+	// "wildscribe.com/adventure/internal/request"
 	"wildscribe.com/adventure/pkg/model"
+	// "wildscribe.com/gen"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -29,9 +30,8 @@ func New(repo adventureRepository) *Controller {
 }
 
 // Get returns an adventure by a given adventure ID.
-func (c *Controller) Show(ctx context.Context, request request.AdventureRequest) (*model.Adventure, error) {
-	id := request.Data.Attributes.Adventure_id
-	adventure, err := c.repo.GetOne(ctx, id)
+func (c *Controller) Show(ctx context.Context, adventure_id string) (*model.Adventure, error) {
+	adventure, err := c.repo.GetOne(ctx, adventure_id)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Show: Failed querying DB: %w", err)
 		return nil, new_error
@@ -40,12 +40,12 @@ func (c *Controller) Show(ctx context.Context, request request.AdventureRequest)
 }
 
 // Create binds request to a model, Adds it to the Database and returns the model if successful
-func (c *Controller) Create(ctx context.Context, request request.AdventureRequest) (*model.Adventure, error) {
-	adventure := model.NewAdventure(request)
-	err := c.repo.Create(ctx, adventure)
-	if err != nil {
-		new_error := fmt.Errorf("Controller::Create: Failed to create adventure: %w", err)
-		return nil, new_error
-	}
-	return adventure, nil
-}
+// func (c *Controller) Create(ctx context.Context, req *gen.GetAdventureRequest) (*model.Adventure, error) {
+// 	adventure := model.NewAdventure(request)
+// 	err := c.repo.Create(ctx, adventure)
+// 	if err != nil {
+// 		new_error := fmt.Errorf("Controller::Create: Failed to create adventure: %w", err)
+// 		return nil, new_error
+// 	}
+// 	return adventure, nil
+// }
