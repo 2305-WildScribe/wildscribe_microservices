@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+
 	"wildscribe.com/user/pkg/model"
 	"wildscribe.com/wildscribe/internal/gateway"
 	"wildscribe.com/wildscribe/internal/request"
@@ -45,8 +47,7 @@ func (g *Gateway) GetUser(ctx context.Context, request request.UserRequest) (*mo
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-
+	log.Println(resp.StatusCode)
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, gateway.ErrNotFound
 	} else if resp.StatusCode/100 != 2 {
@@ -57,6 +58,6 @@ func (g *Gateway) GetUser(ctx context.Context, request request.UserRequest) (*mo
 	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		return nil, err
 	}
-
+	log.Println(user)
 	return &user, nil
 }

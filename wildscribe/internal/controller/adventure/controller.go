@@ -3,9 +3,10 @@ package adventure
 import (
 	"context"
 	"errors"
+	"log"
 
-	"wildscribe.com/adventure/pkg/model"
 	"wildscribe.com/wildscribe/internal/request"
+	"wildscribe.com/wildscribe/pkg/model"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -31,5 +32,6 @@ func (c *Controller) GetAdventure(ctx context.Context, request request.Adventure
 	if err != nil {
 		return adventure, err
 	}
+	log.Println(adventure)
 	return adventure, err
 }

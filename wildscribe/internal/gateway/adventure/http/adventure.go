@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
-	"wildscribe.com/adventure/pkg/model"
-	"wildscribe.com/wildscribe/internal/gateway"
 	"wildscribe.com/wildscribe/internal/request"
+	"wildscribe.com/wildscribe/pkg/model"
 )
 
 // Gateway defines movie metadata HTTP gateway.
@@ -23,11 +23,10 @@ func New(addr string) *Gateway {
 
 // Get gets movie metadata for a given movie ID.
 
-func (g *Gateway) GetAdventure(ctx context.Context, request request.AdventureRequest) (*model.Adventure, error) {
-	var adventure model.Adventure
-
+func (g *Gateway) GetAdventure(ctx context.Context, gateway_request request.AdventureRequest) (*model.Adventure, error) {
+	var adventureResponse request.GatewayAdventureRequest
 	// Convert the data map to JSON
-	jsonData, err := json.Marshal(request)
+	jsonData, err := json.Marshal(gateway_request)
 	if err != nil {
 		return nil, err
 	}
@@ -48,17 +47,19 @@ func (g *Gateway) GetAdventure(ctx context.Context, request request.AdventureReq
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, gateway.ErrNotFound
-	} else if resp.StatusCode/100 != 2 {
-		return nil, fmt.Errorf("non-2xx response: %v", resp)
-	}
-
-	// Decode the response body
-	if err := json.NewDecoder(resp.Body).Decode(&adventure); err != nil {
+	// Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
 		return nil, err
 	}
 
-	return &adventure, nil
+	log.Printf("Raw JSON Response: %s", body)
+
+	if err := json.Unmarshal(body, &adventureResponse); err != nil {
+		log.Printf("Error decoding JSON: %v", err)
+		return nil, err
+	}
+
+	adventure := model.NewAdventure(adventureResponse)
+	return adventure, nil
 }

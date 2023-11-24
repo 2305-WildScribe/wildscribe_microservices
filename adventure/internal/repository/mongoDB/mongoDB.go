@@ -28,12 +28,12 @@ func ConnectDB() *Database {
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error connecting to MongoDB:", err)
 	}
 
 	err = client.Ping(context.Background(), nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error connecting to MongoDB:", err)
 	}
 
 	fmt.Println("Connected to MongoDB")

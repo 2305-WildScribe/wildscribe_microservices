@@ -3,6 +3,7 @@ package gin_handler
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
 	"wildscribe.com/wildscribe/internal/controller/user"
@@ -39,13 +40,13 @@ func (h *UserHandler) GetUser() gin.HandlerFunc {
 		if err != nil {
 			userResponse.Data.Error = "Invalid Email / Password"
 			userResponse.Data.Type = "user"
-			userResponse.Data.Attributes = map[string]interface{}{"email": userRequest.Data.Attributes.Email, "password": userRequest.Data.Attributes.Password}
+			userResponse.Data.Attributes = nil
 			c.JSON(http.StatusUnauthorized, userResponse)
 			return
 		}
-
+		log.Println(user)
 		userResponse.Data.Type = "user"
-		userResponse.Data.Attributes = map[string]interface{}{"name": user.Name, "user_id": user.User_id}
+		userResponse.Data.Attributes = user
 		c.JSON(http.StatusOK, userResponse)
 	}
 }

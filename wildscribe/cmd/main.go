@@ -49,7 +49,7 @@ func main() {
 	log.Println("Connecting to Wildscribe adventure microservice service")
 
 	// Sets current Adventure Gateway address
-	adventureGateway := adventuregateway.New("http://0.0.0.0:8082")
+	adventureGateway := adventuregateway.New("https://wildscribe-adventure-service-4dfd475e9dcd.herokuapp.com")
 
 	// Setup Adventure Controller
 	advctrl := adventure.New(adventureGateway)
@@ -65,7 +65,7 @@ func main() {
 	log.Println("Connecting to Wildscribe user microservice")
 
 	// Sets current User Gateway address
-	userGateway := usergateway.New("http://0.0.0.0:8081")
+	userGateway := usergateway.New("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
 
 	// Setup User Controller
 	userctrl := user.New(userGateway)

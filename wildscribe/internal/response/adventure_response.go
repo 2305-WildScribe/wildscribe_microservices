@@ -1,6 +1,6 @@
 package response
 
-import "wildscribe.com/adventure/pkg/model"
+import "wildscribe.com/wildscribe/pkg/model"
 
 type AdventureResponse struct {
 	Data struct {
