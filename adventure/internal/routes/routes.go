@@ -14,4 +14,5 @@ func AdventureRoutes(router *gin.Engine, handler *gin_handler.Handler) {
 	})
 
 	router.POST("/adventure", handler.GetAnAdventure())
+	router.POST("/create_adventure", handler.CreateAdventure())
 }

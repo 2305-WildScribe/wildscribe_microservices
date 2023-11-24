@@ -15,3 +15,12 @@ func EnvMongoURI() string {
 	}
 	return os.Getenv("MONGOURI")
 }
+
+func EnvMongoDB() string {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Printf("error: %v\n", err)
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv("DATABASE")
+}

@@ -14,7 +14,7 @@ import (
 
 // Set Database stuct
 type Database struct {
-	db *mongo.Client
+	mongoClient *mongo.Client
 }
 
 // Set Collection struct
@@ -38,14 +38,14 @@ func ConnectDB() *Database {
 
 	fmt.Println("Connected to MongoDB")
 	return &Database{
-		db: client,
+		mongoClient: client,
 	}
 }
 
-// Sets the collection to "metadata"
-func NewCollection(db *Database) *Collection {
+// Sets the collection to "adventures"
+func NewCollection(database *Database) *Collection {
 	return &Collection{
-		collection: db.db.Database("golangAPI").Collection("adventures"),
+		collection: database.mongoClient.Database("golangAPI").Collection("adventures"),
 	}
 }
 
@@ -55,23 +55,45 @@ var adventure model.Adventure
 // Get a single collection from the ID, bind & return adventure model.
 func (c *Collection) GetOne(ctx context.Context, id string) (*model.Adventure, error) {
 	objId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		new_error := fmt.Errorf("MongoDB::GetOne: Decode objId Failed: %w", err)
+		return nil, new_error
+	}
 	filter := bson.D{{Key: "_id", Value: objId}}
 	result := c.collection.FindOne(ctx, filter).Decode(&adventure)
 	if result != nil {
-		log.Printf("MongoDB error: %v\n", err)
-		return nil, err
+		new_error := fmt.Errorf("MongoDB::GetOne: FindOne Failed: %w", result)
+		return nil, new_error
 	}
 	return &adventure, nil
 }
 
+// Get All Adventures from collection based on a User ID, bind & return []adventure models
+func (c *Collection) GetAll(ctx context.Context, id string) ([]*model.Adventure, error) {
+	var adventures []*model.Adventure
+	filter := bson.D{{Key: "user_id", Value: id}}
+	cursor, err := c.collection.Find(ctx, filter)
+	if err != nil {
+		new_error := fmt.Errorf("MongoDB::GetAll: Find Failed: %w", err)
+		return nil, new_error
+	}
+	defer cursor.Close(ctx)
+	if err := cursor.All(ctx, &adventures); err != nil {
+		new_error := fmt.Errorf("MongoDB::GetAll: Cursor Failed: %w", err)
+		return nil, new_error
+	}
+	return adventures, nil
+}
+
 // Create a new adventure
 func (c *Collection) Create(ctx context.Context, adventure *model.Adventure) error {
-	_, err := c.collection.InsertOne(ctx, adventure)
+	result, err := c.collection.InsertOne(ctx, adventure)
 	if err != nil {
-			log.Printf("MongoDB error: %v\n", err)
-			return err
+		new_error := fmt.Errorf("MongoDB::Create: InsertOne Failed: %w", err)
+		return new_error
 	}
-	return nil
+	adventure.Adventure_id = result.InsertedID.(primitive.ObjectID).Hex()
+	return err
 }
 
 // Update an adventure
@@ -80,8 +102,8 @@ func (c *Collection) Update(ctx context.Context, updatedAdventure *model.Adventu
 	update := bson.D{{Key: "$set", Value: updatedAdventure}}
 	_, err := c.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
-			log.Printf("MongoDB error: %v\n", err)
-			return err
+		new_error := fmt.Errorf("MongoDB::Update: UpdateOne Failed: %w", err)
+		return new_error
 	}
 	return nil
 }
@@ -90,15 +112,14 @@ func (c *Collection) Update(ctx context.Context, updatedAdventure *model.Adventu
 func (c *Collection) Delete(ctx context.Context, id string) error {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		log.Printf("Failed to convert ID to ObjectID: %v\n", err)
-		return err
+		new_error := fmt.Errorf("MongoDB::Delete: Decode objId Failed: %w", err)
+		return new_error
 	}
 	filter := bson.D{{Key: "_id", Value: objID}}
 	_, err = c.collection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Printf("MongoDB error: %v\n", err)
-		return err
+		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)
+		return new_error
 	}
 	return nil
 }
-

@@ -2,10 +2,11 @@ package gin_handler
 
 import (
 	"context"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 	"time"
-
-	"github.com/gin-gonic/gin"
 	"wildscribe.com/adventure/internal/controller/adventure"
 	"wildscribe.com/adventure/internal/request"
 	"wildscribe.com/adventure/internal/response"
@@ -22,32 +23,59 @@ func New(ctrl *adventure.Controller) *Handler {
 	return &Handler{ctrl}
 }
 
-// GetAnAdventure handles GET /user requests.
+// GetAnAdventure handles GET /adventure requests.
 func (h *Handler) GetAnAdventure() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var adventureRequest request.AdventureRequest
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
+		// Binds http request to requestBody, if request struct isn't valid, send error
+		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			log.Println(fmt.Errorf("Handler::Show: Failed to Bind JSON to request: %w", err))
+			adventureResponse := response.NewErrorResponse("Adventure not found")
+			c.JSON(http.StatusBadRequest, adventureResponse)
+			return
+		}
+		// Sends request to controller
+		adventure, err := h.ctrl.Show(ctx, adventureRequest)
+		if err != nil {
+			log.Println(fmt.Errorf("Handler::Show: Error fetching adventure: %w", err))
+			adventureResponse := response.NewErrorResponse("Adventure not found")
+			c.JSON(http.StatusBadRequest, adventureResponse)
+			return
+		}
+
+		adventureResponse := response.NewSuccessResponse(adventure)
+		c.JSON(http.StatusOK, adventureResponse)
+	}
+}
+
+// Create Adventure handles Create /adventure requests.
+func (h *Handler) CreateAdventure() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		var adventureRequest request.AdventureRequest
-		var adventureResponse response.AdventureResponse
 
 		// Binds http request to requestBody
 		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.Println(fmt.Errorf("Handler::Create: Failed to bind JSON to request: %w", err))
+			adventureResponse := response.NewErrorResponse("Adventure Not Created")
+			c.JSON(http.StatusBadRequest, adventureResponse)
 			return
 		}
 
-		adventure, err := h.ctrl.Show(ctx, adventureRequest.Data.Attributes.Adventure_id)
+		adventure, err := h.ctrl.Create(ctx, adventureRequest)
 		if err != nil {
-			adventureResponse.Data.Error = "Invalid Adventure ID"
-			adventureResponse.Data.Type = "adventure"
+			log.Println(fmt.Errorf("Handler::Create: Failed to create adventure: %w", err))
+			adventureResponse := response.NewErrorResponse("Adventure Not Created")
 			c.JSON(http.StatusUnauthorized, adventureResponse)
 			return
 		}
-		adventureResponse.Data.Attributes = append(adventureResponse.Data.Attributes, adventure)
 
-		adventureResponse.Data.Type = "adventure"
+		adventureResponse := response.NewSuccessResponse(adventure)
 		c.JSON(http.StatusOK, adventureResponse)
 	}
 }
