@@ -40,5 +40,6 @@ func (c *Collection) Update(_ context.Context, adventure *model.Adventure) error
 }
 
 func (c *Collection) Create(_ context.Context, adventure *model.Adventure) error {
+	adventure.Adventure_id = "656001daf827a04b7a66bafa"
 	return nil
 }
