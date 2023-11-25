@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	// "gopkg.in/yaml.v3"
+	"net"
+
+
 	"log"
 	"os"
-	"wildscribe.com/user/internal/controller/user"
-	"wildscribe.com/user/internal/handler/gin_handler"
-	"wildscribe.com/user/internal/repository/mongoDB"
-	"wildscribe.com/user/internal/routes"
+
+	"wildscribe.com/user/internal/controller"
+	grpchandler "wildscribe.com/user/internal/handler/grpc"
+	database "wildscribe.com/user/internal/repository/mongoDB"
+	"google.golang.org/grpc"
+	"wildscribe.com/gen"
 )
 
 func main() {
@@ -28,28 +31,30 @@ func main() {
 
 	route := fmt.Sprintf("%s:%s", address, port)
 	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
-	router := gin.Default()
 	log.Println("Connecting to MongoDB")
-	db := mongoDB.ConnectDB()
+	db := database.ConnectDB()
 	log.Println("Done!")
 
 	log.Println("Setting up collection")
-	repo := mongoDB.NewCollection(db)
+	repo := database.NewCollection(db)
 	log.Println("Done!")
 
 	log.Println("Setting controller")
-	ctrl := user.New(repo)
+	ctrl := controller.New(repo)
 	log.Println("Done!")
 
 	log.Println("Setting handler")
-	handler := gin_handler.New(ctrl)
+	handler := grpchandler.New(ctrl)
 	log.Println("Done!")
 
-	log.Println("Setting routes")
-	routes.UserRoute(router, handler)
+	log.Println("Setting up gRPC server")
+	lis, err := net.Listen("tcp", route)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 	log.Println("Done!")
 
-	log.Println("Starting service")
-	router.Run(route)
-	log.Println("Done! Service is live!")
+	srv := grpc.NewServer()
+	gen.RegisterUserServiceServer(srv, handler)
+	srv.Serve(lis)
 }

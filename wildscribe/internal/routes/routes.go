@@ -12,7 +12,10 @@ func Routes(router *gin.Engine, handler *gin_handler.GinHandler) {
 		})
 	})
 	// User Routes
-	router.POST("api/v0/user", handler.GetUser())
+	router.POST("api/v0/user", handler.LoginUser())
+	router.POST("api/v0/user/create", handler.CreateUser())
+	router.POST("api/v0/user/update", handler.UpdateUser())
+	router.POST("api/v0/user/delete", handler.DeleteUser())
 
 	// Adventure Routes
 	router.POST("api/v0/adventure", handler.GetAnAdventure())

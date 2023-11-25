@@ -15,9 +15,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"wildscribe.com/gen"
 	adventuregateway "wildscribe.com/wildscribe/internal/gateway/adventure/grpc"
-	usergateway "wildscribe.com/wildscribe/internal/gateway/user/http"
+	usergateway "wildscribe.com/wildscribe/internal/gateway/user/grpc"
 	"wildscribe.com/wildscribe/internal/handler/gin_handler"
 	"wildscribe.com/wildscribe/internal/routes"
+
 )
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 	log.Println("Done!")
 	// User grpc gateway setup
 	log.Println("Setting up User Gateway")
-	userGateway := usergateway.New("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
+	userGateway := usergateway.NewUserGateway("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
 	log.Println("Done!")
 	// Setup controller for main func
 	log.Println("Setting controller")

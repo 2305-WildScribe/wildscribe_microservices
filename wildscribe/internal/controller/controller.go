@@ -8,7 +8,6 @@ import (
 
 	adventuremodel "wildscribe.com/adventure/pkg/model"
 	usermodel "wildscribe.com/user/pkg/model"
-	"wildscribe.com/wildscribe/internal/request"
 )
 
 var ErrNotFound = errors.New("not found")
@@ -22,7 +21,11 @@ type adventureGateway interface {
 }
 
 type userGateway interface {
-	GetUser(ctx context.Context, request request.UserRequest) (*usermodel.User, error)
+	LoginUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error)
+	ValidateUser(ctx context.Context, user_id string) (string, error)
+	CreateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error)
+	UpdateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error)
+	DeleteUser(ctx context.Context, user_id string) (string, error)
 }
 
 // Controller defines a adventure service controller.
@@ -93,13 +96,56 @@ func (c *Controller) DeleteAdventure(ctx context.Context, adventure_id string) (
 }
 
 // Get returns user details including aggregated rating and user adventure for a given user ID.
-func (c *Controller) GetUser(ctx context.Context, request request.UserRequest) (*usermodel.User, error) {
-	var user *usermodel.User
-	user, err := c.userGateway.GetUser(ctx, request)
+func (c *Controller) LoginUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error) {
+	user, err := c.userGateway.LoginUser(ctx, user)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::GetUser: Error fetching User: %w", err)
 		log.Println(new_error)
 		return user, err
 	}
+	log.Println(user)
 	return user, err
 }
+
+func (c *Controller) ValidateUser(ctx context.Context, user_id string) (string, error) {
+	var user string
+	user, err := c.userGateway.ValidateUser(ctx, user_id)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::ValidateUser: Error fetching User: %w", err)
+		log.Println(new_error)
+		return user, err
+	}
+	return user, err
+}
+
+func (c *Controller) CreateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error) {
+	user, err := c.userGateway.CreateUser(ctx, user)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::CreateUser: Error fetching User: %w", err)
+		log.Println(new_error)
+		return user, err
+	}
+	return user, err
+}
+
+func (c *Controller) UpdateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error) {
+	user, err := c.userGateway.UpdateUser(ctx, user)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::UpdateUser: Error fetching User: %w", err)
+		log.Println(new_error)
+		return user, err
+	}
+	return user, err
+}
+
+func (c *Controller) DeleteUser(ctx context.Context, user_id string) (string, error) {
+	var user string
+	user, err := c.userGateway.DeleteUser(ctx, user_id)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::DeleteUser: Error fetching User: %w", err)
+		log.Println(new_error)
+		return user, err
+	}
+	return user, err
+}
+
