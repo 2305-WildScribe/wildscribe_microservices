@@ -12,9 +12,6 @@ import (
 	"wildscribe.com/wildscribe/internal/controller"
 	grpchandler "wildscribe.com/wildscribe/internal/handler/grpc"
 
-	// "wildscribe.com/internal/grpcutil"
-	// "wildscribe.com/wildscribe/internal/controller/adventure"
-	// "wildscribe.com/wildscribe/internal/controller/user"
 	"github.com/gin-gonic/gin"
 	"wildscribe.com/gen"
 	adventuregateway "wildscribe.com/wildscribe/internal/gateway/adventure/grpc"

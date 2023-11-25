@@ -16,6 +16,9 @@ var ErrNotFound = errors.New("not found")
 type adventureGateway interface {
 	GetAdventure(ctx context.Context, adventure_id string) (*adventuremodel.Adventure, error)
 	GetAllAdventures(ctx context.Context, user_id string) ([]*adventuremodel.Adventure, error)
+	CreateAdventure(ctx context.Context, adventure *adventuremodel.Adventure) (*adventuremodel.Adventure, error)
+	UpdateAdventure(ctx context.Context, adventure *adventuremodel.Adventure) (*adventuremodel.Adventure, error)
+	DeleteAdventure(ctx context.Context, adventure_id string) (string, error)
 }
 
 type userGateway interface {
@@ -54,6 +57,39 @@ func (c *Controller) GetAllAdventures(ctx context.Context, user_id string) ([]*a
 		return adventures, new_error
 	}
 	return adventures, err
+}
+
+func (c *Controller) CreateAdventure(ctx context.Context, adventure *adventuremodel.Adventure) (*adventuremodel.Adventure, error) {
+	// var adventures []*adventuremodel.Adventure
+	adventure, err := c.adventureGateway.CreateAdventure(ctx, adventure)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::GetAllAdventures: Error fetching Adventures: %w", err)
+		log.Println(new_error)
+		return adventure, new_error
+	}
+	return adventure, err
+}
+
+func (c *Controller) UpdateAdventure(ctx context.Context, adventure *adventuremodel.Adventure) (*adventuremodel.Adventure, error) {
+	// var adventures []*adventuremodel.Adventure
+	adventure, err := c.adventureGateway.UpdateAdventure(ctx, adventure)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::GetAllAdventures: Error fetching Adventures: %w", err)
+		log.Println(new_error)
+		return adventure, new_error
+	}
+	return adventure, err
+}
+
+func (c *Controller) DeleteAdventure(ctx context.Context, adventure_id string) (string, error) {
+	// var adventures []*adventuremodel.Adventure
+	adventure, err := c.adventureGateway.DeleteAdventure(ctx, adventure_id)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::GetAllAdventures: Error fetching Adventures: %w", err)
+		log.Println(new_error)
+		return adventure, new_error
+	}
+	return adventure, err
 }
 
 // Get returns user details including aggregated rating and user adventure for a given user ID.

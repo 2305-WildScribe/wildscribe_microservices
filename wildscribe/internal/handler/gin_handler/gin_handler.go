@@ -58,29 +58,131 @@ func (h *GinHandler) GetAnAdventure() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-
 		var adventureRequest request.AdventureRequest
-		var adventureResponse response.AdventureResponse
-
 		// Binds http request to requestBody
 		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
-			log.Println(fmt.Errorf("Gin_Handler::GetAnAdventure: Error Binding Request JSON: %w.", err))
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error binding request body to JSON: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Request Format")
+			c.JSON(http.StatusBadRequest, response)
 			return
 		}
-
 		adventure, err := h.ctrl.GetAdventure(ctx, adventureRequest.Data.Attributes.Adventure_id)
 		if err != nil {
-			log.Println(fmt.Errorf("Gin_Handler::GetAnAdventure: Couldn't Fetch Adventure: %w.", err))
-			adventureResponse.Data.Error = "Invalid Email / Password"
-			adventureResponse.Data.Type = "adventure"
-			adventureResponse.Data.Attributes = nil
-			c.JSON(http.StatusUnauthorized, adventureResponse)
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error fetching Adventure: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Adventure ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		response := response.NewSuccessResponse(adventure)
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (h *GinHandler) GetAllAdventures() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		var adventureRequest request.AdventureRequest
+		// Binds http request to requestBody
+		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAllAdventures: Error binding request body to JSON: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Request Format")
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+		adventures, err := h.ctrl.GetAllAdventures(ctx, adventureRequest.Data.Attributes.User_id)
+		if err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAllAdventures: Error fetching Adventure: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Adventure ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		log.Println(adventures)
+		response := response.NewSuccessResponse(adventures...)
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (h *GinHandler) CreateAdventure() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		var adventureRequest request.AdventureRequest
+		// Binds http request to requestBody
+		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			new_error := fmt.Errorf("GinHandler::CreateAdventure: Error binding request body to JSON: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Request Format")
+			c.JSON(http.StatusBadRequest, response)
 			return
 		}
 
-		adventureResponse.Data.Type = "adventure"
-		adventureResponse.Data.Attributes = append(adventureResponse.Data.Attributes, adventure)
-		c.JSON(http.StatusOK, adventureResponse)
+		adventure := adventureRequest.Data.Attributes.ToAdventure()
+		createdAdventure, err := h.ctrl.CreateAdventure(ctx, adventure)
+		if err != nil {
+			new_error := fmt.Errorf("GinHandler::CreateAdventure: Error fetching Adventure: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Adventure ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		response := response.NewSuccessResponse(createdAdventure)
+		c.JSON(http.StatusOK, response)
+	}
+}
+func (h *GinHandler) UpdateAdventure() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		var adventureRequest request.AdventureRequest
+		// Binds http request to requestBody
+		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error binding request body to JSON: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Request Format")
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+		adventure := adventureRequest.Data.Attributes.ToAdventure()
+		createdAdventure, err := h.ctrl.UpdateAdventure(ctx, adventure)
+		if err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error fetching Adventure: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Adventure ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		response := response.NewSuccessResponse(createdAdventure)
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (h *GinHandler) DeleteAdventure() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		var adventureRequest request.AdventureRequest
+		// Binds http request to requestBody
+		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error binding request body to JSON: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Request Format")
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+		_, err := h.ctrl.DeleteAdventure(ctx, adventureRequest.Data.Attributes.Adventure_id)
+		if err != nil {
+			new_error := fmt.Errorf("GinHandler::GetAnAdventure: Error fetching Adventure: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid Adventure ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
+		response := response.NewSuccessResponse(nil)
+		c.JSON(http.StatusOK, response)
 	}
 }

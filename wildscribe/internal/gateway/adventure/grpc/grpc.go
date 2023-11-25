@@ -43,10 +43,9 @@ func (g *Gateway) GetAllAdventures(ctx context.Context, user_id string) ([]*mode
 		new_error := fmt.Errorf("AdvGrpcGateway::GetAllAdventures: Error getting adventures: %w", err)
 		return nil, new_error
 	}
-	var adventures []*model.Adventure
-	for _, protoAdventure := range resp.Adventures {
-		adventures = append(adventures, model.AdventureFromProto(protoAdventure))
-	}
+	adventures := model.AdventureSliceFromProto(resp.Adventures)
+	log.Println(adventures)
+
 	return adventures, nil
 }
 
@@ -68,11 +67,11 @@ func (g *Gateway) UpdateAdventure(ctx context.Context, adventure *model.Adventur
 	return model.AdventureFromProto(resp.Adventure), nil
 }
 
-func (g *Gateway) DeleteAdventure(ctx context.Context, adventure *model.Adventure) (string, error) {
-	resp, err := g.adventureClient.DeleteAdventure(ctx, &gen.DeleteAdventureRequest{AdventureId: adventure.Adventure_id})
+func (g *Gateway) DeleteAdventure(ctx context.Context, adventure_id string) (string, error) {
+	resp, err := g.adventureClient.DeleteAdventure(ctx, &gen.DeleteAdventureRequest{AdventureId: adventure_id})
 	if err != nil {
 		new_error := fmt.Errorf("AdvGrpcGateway::DeleteAdventure: Error deleting adventure: %w", err)
-		return adventure.Adventure_id, new_error
+		return adventure_id, new_error
 	}
 	return resp.AdventureId, nil
 }

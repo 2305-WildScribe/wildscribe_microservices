@@ -97,26 +97,23 @@ func (c *Collection) Create(ctx context.Context, adventure *model.Adventure) err
 }
 
 // Update an adventure
-func (c *Collection) Update(ctx context.Context, updatedAdventure *model.Adventure) error {
-	filter := bson.D{{Key: "_id", Value: updatedAdventure.Adventure_id}}
-	update := bson.D{{Key: "$set", Value: updatedAdventure}}
+func (c *Collection) Update(ctx context.Context, adventure *model.Adventure) error {
+
+	filter := bson.D{{Key: "_id", Value: adventure.Adventure_id}}
+	update := bson.D{{Key: "$set", Value: adventure}}
 	_, err := c.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		new_error := fmt.Errorf("MongoDB::Update: UpdateOne Failed: %w", err)
 		return new_error
 	}
+
 	return nil
 }
 
 // Delete an adventure
 func (c *Collection) Delete(ctx context.Context, id string) error {
-	objID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		new_error := fmt.Errorf("MongoDB::Delete: Decode objId Failed: %w", err)
-		return new_error
-	}
-	filter := bson.D{{Key: "_id", Value: objID}}
-	_, err = c.collection.DeleteOne(ctx, filter)
+	filter := bson.D{{Key: "_id", Value: id}}
+	_, err := c.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)
 		return new_error

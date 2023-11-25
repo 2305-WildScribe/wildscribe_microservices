@@ -1,8 +1,6 @@
 package model
 
-import (
-	"wildscribe.com/gen"
-)
+import "wildscribe.com/gen"
 
 // AdventureToProto converts a Adventure struct into a
 // generated proto counterpart.
@@ -39,6 +37,8 @@ func AdventureFromProto(m *gen.Adventure) *Adventure {
 		Diet:                 m.Diet,
 		Diet_hydration_notes: m.DietHydrationNotes,
 		Beta_notes:           m.BetaNotes,
+		Lat:                  m.Lat,
+		Lon:                  m.Lon,
 	}
 }
 

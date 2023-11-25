@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 
-	// "math/rand"
-	// "yourpackage/discovery"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
