@@ -10,3 +10,31 @@ type AdventureResponse struct {
 		Attributes []*model.Adventure `json:"attributes,omitempty"`
 	} `json:"data"`
 }
+
+func NewErrorResponse(err string) *AdventureResponse {
+	return &AdventureResponse{
+		Data: struct {
+			Message    string             `json:"message,omitempty"`
+			Error      string             `json:"error,omitempty"` // Change the type to string
+			Type       string             `json:"type,omitempty"`
+			Attributes []*model.Adventure `json:"attributes,omitempty"`
+		}{
+			Type:  "error",
+			Error: err, // Set the error message here
+		},
+	}
+}
+
+func NewSuccessResponse(adventures ...*model.Adventure) *AdventureResponse {
+	return &AdventureResponse{
+		Data: struct {
+			Message    string             `json:"message,omitempty"`
+			Error      string             `json:"error,omitempty"` // Change the type to string
+			Type       string             `json:"type,omitempty"`
+			Attributes []*model.Adventure `json:"attributes,omitempty"`
+		}{
+			Type:       "adventure",
+			Attributes: adventures,
+		},
+	}
+}

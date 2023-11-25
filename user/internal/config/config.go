@@ -8,10 +8,28 @@ import (
 
 // Access Env for MONGOURI
 func EnvMongoURI() string {
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		uri := os.Getenv("MONGOURI")
+		log.Println(uri)
+		return uri
+	}
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Printf("error: %v\n", err)
-		log.Fatal("Error loading .env file")
 	}
 	return os.Getenv("MONGOURI")
+}
+
+func EnvMongoDB() string {
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		uri := "MONGOURI"
+		return uri
+	}
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Printf("error: %v\n", err)
+	}
+	return os.Getenv("DATABASE")
 }

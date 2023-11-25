@@ -2,53 +2,65 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 	"log"
+	"net"
 	"os"
-	"wildscribe.com/adventure/internal/controller/adventure"
-	"wildscribe.com/adventure/internal/handler/gin_handler"
-	"wildscribe.com/adventure/internal/repository/mongoDB"
-	"wildscribe.com/adventure/internal/routes"
+
+	"wildscribe.com/adventure/internal/controller"
+	grpchandler "wildscribe.com/adventure/internal/handler/grpc"
+	database "wildscribe.com/adventure/internal/repository/mongoDB"
+	"wildscribe.com/gen"
 )
 
 func main() {
 	var port string
+	var address string
 	log.Println("Starting wildscribe adventure service...")
 	env := os.Getenv("ENV")
 
 	if env == "PROD" {
 		port = os.Getenv("PORT")
+		address = "0.0.0.0"
 	} else {
-
-		// f, err := os.Open("configs/base.yml")
-
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// defer f.Close()
-
-		// var cfg ServiceConfig
-
-		// if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {
-		// 	panic(err)
-		// }
-		port = "8082"
+		port = "8083"
+		address = "0.0.0.0"
 	}
 
-	route := fmt.Sprintf("0.0.0.0:%s", port)
+	route := fmt.Sprintf("%s:%s", address, port)
+	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
 
-	router := gin.Default()
+	log.Println("Connecting to MongoDB")
+	db := database.ConnectDB()
+	log.Println("Done!")
 
-	db := mongoDB.ConnectDB()
+	log.Println("Setting up collection")
+	repo := database.NewCollection(db)
+	log.Println("Done!")
 
-	repo := mongoDB.NewCollection(db)
+	log.Println("Setting controller")
+	svc := controller.New(repo)
+	log.Println("Done!")
 
-	ctrl := adventure.New(repo)
+	log.Println("Setting Handler")
+	h := grpchandler.New(svc)
+	log.Println("Done!")
 
-	handler := gin_handler.New(ctrl)
+	log.Println("Setting up route")
+	lis, err := net.Listen("tcp", route)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	log.Println("Done!")
 
-	routes.AdventureRoutes(router, handler)
+	log.Println("Setting service")
+	srv := grpc.NewServer()
+	log.Println("Done!")
 
-	router.Run(route)
+	log.Println("Starting service")
+	gen.RegisterAdventureServiceServer(srv, h)
+	srv.Serve(lis)
+
+	log.Println("Service Shutting down! :(")
+
 }
