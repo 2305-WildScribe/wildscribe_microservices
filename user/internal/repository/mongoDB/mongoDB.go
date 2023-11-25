@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"wildscribe.com/user/internal/config"
 	"wildscribe.com/user/pkg/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Set Database stuct
@@ -62,4 +63,40 @@ func (c *Collection) Get(ctx context.Context, email string) (*model.User, error)
 		return nil, err
 	}
 	return &user, nil
+}
+
+// Create a new user
+func (c *Collection) Create(ctx context.Context, user *model.User) error {
+	result, err := c.collection.InsertOne(ctx, user)
+	if err != nil {
+		new_error := fmt.Errorf("MongoDB::Create: InsertOne Failed: %w", err)
+		return new_error
+	}
+	user.User_id = result.InsertedID.(primitive.ObjectID).Hex()
+	return err
+}
+
+// Update an user
+func (c *Collection) Update(ctx context.Context, user *model.User) error {
+
+	filter := bson.D{{Key: "_id", Value: user.User_id}}
+	update := bson.D{{Key: "$set", Value: user}}
+	_, err := c.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		new_error := fmt.Errorf("MongoDB::Update: UpdateOne Failed: %w", err)
+		return new_error
+	}
+
+	return nil
+}
+
+// Delete an user
+func (c *Collection) Delete(ctx context.Context, id string) error {
+	filter := bson.D{{Key: "_id", Value: id}}
+	_, err := c.collection.DeleteOne(ctx, filter)
+	if err != nil {
+		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)
+		return new_error
+	}
+	return nil
 }
