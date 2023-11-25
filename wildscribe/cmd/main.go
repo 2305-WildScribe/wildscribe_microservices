@@ -25,31 +25,21 @@ import (
 
 func main() {
 	var port string
-	log.Println("Starting Wildscribe Application...")
+	var address string
+	log.Println("Starting main Wildscribe service...")
 	env := os.Getenv("ENV")
 
 	if env == "PROD" {
 		port = os.Getenv("PORT")
+		address = "0.0.0.0"
 	} else {
-
-		// f, err := os.Open("configs/base.yml")
-
-		// if err != nil {
-		// 	panic(err)
-		// }
-
-		// defer f.Close()
-
-		// var cfg ServiceConfig
-
-		// if err := yaml.NewDecoder(f).Decode(&cfg); err != nil {
-		// 	panic(err)
-		// }
 		port = "8080"
+		address = "0.0.0.0"
 	}
+
 	// Adventure grpc gateway setup
 	log.Println("Setting up Adventure Gateway")
-	adventureGateway := adventuregateway.NewAdvGrpcGateway()
+	adventureGateway := adventuregateway.NewAdventureGateway("0.0.0.0:8083")
 	log.Println("Done!")
 	// User grpc gateway setup
 	log.Println("Setting up User Gateway")
@@ -61,7 +51,6 @@ func main() {
 	log.Println("Done!")
 
 	// Setup Gin router for main controller
-	address := "0.0.0.0"
 	route := fmt.Sprintf("%s:%s", address, port)
 
 	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
@@ -88,14 +77,13 @@ func main() {
 	}()
 
 	srv := grpc.NewServer()
-
 	go func() {
 		log.Println("Setting up gRPC handler")
 		ghandler := grpchandler.New(ctrl)
 		log.Println("Done!")
 
 		log.Println("Setting up gRPC listen address")
-		lis, err := net.Listen("tcp", "localhost:8083")
+		lis, err := net.Listen("tcp", "0.0.0.0:8084")
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}

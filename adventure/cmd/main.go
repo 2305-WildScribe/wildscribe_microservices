@@ -2,17 +2,15 @@ package main
 
 import (
 	"fmt"
-	// "github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"
 	"net"
 	"os"
-	"wildscribe.com/adventure/internal/controller/adventure"
-	"wildscribe.com/gen"
-	// "wildscribe.com/adventure/internal/handler/gin_handler"
-	"wildscribe.com/adventure/internal/repository/mongoDB"
-	// "wildscribe.com/adventure/internal/routes"
+
+	"wildscribe.com/adventure/internal/controller"
 	grpchandler "wildscribe.com/adventure/internal/handler/grpc"
+	"wildscribe.com/adventure/internal/repository/mongoDB"
+	"wildscribe.com/gen"
 )
 
 func main() {
@@ -25,7 +23,7 @@ func main() {
 		port = os.Getenv("PORT")
 		address = "0.0.0.0"
 	} else {
-		port = "8082"
+		port = "8083"
 		address = "0.0.0.0"
 	}
 
@@ -41,16 +39,18 @@ func main() {
 	log.Println("Done!")
 
 	log.Println("Setting controller")
-	svc := adventure.New(repo)
+	svc := controller.New(repo)
 	log.Println("Done!")
 	log.Println("Setting Handler")
 	h := grpchandler.New(svc)
 	log.Println("Done!")
 	log.Println("Setting up route")
-	lis, err := net.Listen("tcp", "localhost:8081")
+
+	lis, err := net.Listen("tcp", route)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
 	log.Println("Done!")
 	log.Println("Setting service")
 	srv := grpc.NewServer()
@@ -61,17 +61,3 @@ func main() {
 	log.Println("Done!")
 
 }
-
-// log.Println("Setting handler")
-// handler := grpchandler.New(svc)
-// log.Println("Done!")
-
-// log.Println("Setting routes")
-// // routes.AdventureRoutes(router, handler)
-
-// log.Println("Done!")
-
-// log.Println("Starting service")
-// router.Run(route)
-// log.Println("Done! Service is live!")
-// }

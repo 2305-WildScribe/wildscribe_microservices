@@ -18,9 +18,15 @@ message Adventure {
 service AdventureService {
     rpc GetAdventure(GetAdventureRequest) returns
 (GetAdventureResponse);
-    rpc PutAdventure(PutAdventureRequest) returns
-(PutAdventureResponse);
-}
+    rpc GetAllAdventures(GetAllAdventuresRequest) returns
+(GetAllAdventuresResponse);
+    rpc CreateAdventure(CreateAdventureRequest) returns
+(CreateAdventureResponse);
+    rpc UpdateAdventure(UpdateAdventureRequest) returns
+(UpdateAdventureResponse);
+    rpc DeleteAdventure(DeleteAdventureRequest) returns
+(DeleteAdventureResponse);
+}   
 
 message GetAdventureRequest {
     string adventure_id = 1;
@@ -28,11 +34,36 @@ message GetAdventureRequest {
 message GetAdventureResponse {
     Adventure adventure = 1;
 }
-message PutAdventureRequest {
-    string adventure = 1;
+
+message GetAllAdventuresRequest{
+    string user_id = 1;
 }
-message PutAdventureResponse {
+
+message GetAllAdventuresResponse {
+    repeated Adventure adventures = 1;
+}
+
+message CreateAdventureRequest {
     Adventure adventure = 1;
+}
+
+message CreateAdventureResponse {
+    Adventure adventure = 1;
+}
+
+message UpdateAdventureRequest {
+    Adventure adventure = 1;
+}
+
+message UpdateAdventureResponse {
+    Adventure adventure = 1;
+}
+
+message DeleteAdventureRequest {
+    string adventure_id = 1;
+}
+message DeleteAdventureResponse {
+    string adventure_id = 1;
 }
 
 message User {

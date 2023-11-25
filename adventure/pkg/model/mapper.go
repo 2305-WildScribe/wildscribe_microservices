@@ -41,3 +41,21 @@ func AdventureFromProto(m *gen.Adventure) *Adventure {
 		Beta_notes:           m.BetaNotes,
 	}
 }
+
+// AdventureSliceFromProto converts a slice of Adventure protos to a slice of model.Adventure.
+func AdventureSliceFromProto(protoAdventures []*gen.Adventure) []*Adventure {
+	var adventures []*Adventure
+	for _, protoAdventure := range protoAdventures {
+		adventures = append(adventures, AdventureFromProto(protoAdventure))
+	}
+	return adventures
+}
+
+// AdventureSliceToProto converts a slice of model.Adventure to a slice of gen.Adventure.
+func AdventureSliceToProto(adventures []*Adventure) []*gen.Adventure {
+	var protoAdventures []*gen.Adventure
+	for _, adventure := range adventures {
+		protoAdventures = append(protoAdventures, AdventureToProto(adventure))
+	}
+	return protoAdventures
+}

@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	adventuremodel "wildscribe.com/adventure/pkg/model"
@@ -14,6 +15,7 @@ var ErrNotFound = errors.New("not found")
 
 type adventureGateway interface {
 	GetAdventure(ctx context.Context, adventure_id string) (*adventuremodel.Adventure, error)
+	GetAllAdventures(ctx context.Context, user_id string) ([]*adventuremodel.Adventure, error)
 }
 
 type userGateway interface {
@@ -36,10 +38,22 @@ func (c *Controller) GetAdventure(ctx context.Context, adventure_id string) (*ad
 	var adventure *adventuremodel.Adventure
 	adventure, err := c.adventureGateway.GetAdventure(ctx, adventure_id)
 	if err != nil {
+		new_error := fmt.Errorf("Controller::GetAdventure: Error fetching Adventure: %w", err)
+		log.Println(new_error)
 		return adventure, err
 	}
-	log.Println(adventure)
 	return adventure, err
+}
+
+func (c *Controller) GetAllAdventures(ctx context.Context, user_id string) ([]*adventuremodel.Adventure, error) {
+	// var adventures []*adventuremodel.Adventure
+	adventures, err := c.adventureGateway.GetAllAdventures(ctx, user_id)
+	if err != nil {
+		new_error := fmt.Errorf("Controller::GetAllAdventures: Error fetching Adventures: %w", err)
+		log.Println(new_error)
+		return adventures, new_error
+	}
+	return adventures, err
 }
 
 // Get returns user details including aggregated rating and user adventure for a given user ID.
@@ -47,6 +61,8 @@ func (c *Controller) GetUser(ctx context.Context, request request.UserRequest) (
 	var user *usermodel.User
 	user, err := c.userGateway.GetUser(ctx, request)
 	if err != nil {
+		new_error := fmt.Errorf("Controller::GetUser: Error fetching User: %w", err)
+		log.Println(new_error)
 		return user, err
 	}
 	return user, err

@@ -2,6 +2,9 @@ package grpcutil
 
 import (
 	"context"
+	"fmt"
+	"log"
+
 	// "math/rand"
 	// "yourpackage/discovery"
 	"google.golang.org/grpc"
@@ -9,8 +12,11 @@ import (
 )
 
 // ServiceConnection connects to a fixed URL for the specified service.
-func ServiceConnection(ctx context.Context, serviceName string) (*grpc.ClientConn, error) {
+func ServiceConnection(ctx context.Context, serviceAddress string) (*grpc.ClientConn, error) {
 	// Specify the fixed URL for the service
-
-	return grpc.Dial(serviceName, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	log.Printf("GrpcUtil::ServiceConnection: Connected to %s", serviceAddress)
+	client, err := grpc.Dial(serviceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	log.Println(fmt.Errorf("GrpcUtil::ServiceConnection: Error connecting to service: %w", err))
+	log.Println(client)
+	return client, err
 }

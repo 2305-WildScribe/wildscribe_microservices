@@ -2,10 +2,12 @@ package gin_handler
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 	"wildscribe.com/wildscribe/internal/controller"
 	"wildscribe.com/wildscribe/internal/request"
 	"wildscribe.com/wildscribe/internal/response"
@@ -62,12 +64,14 @@ func (h *GinHandler) GetAnAdventure() gin.HandlerFunc {
 
 		// Binds http request to requestBody
 		if err := c.ShouldBindJSON(&adventureRequest); err != nil {
+			log.Println(fmt.Errorf("Gin_Handler::GetAnAdventure: Error Binding Request JSON: %w.", err))
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
 		adventure, err := h.ctrl.GetAdventure(ctx, adventureRequest.Data.Attributes.Adventure_id)
 		if err != nil {
+			log.Println(fmt.Errorf("Gin_Handler::GetAnAdventure: Couldn't Fetch Adventure: %w.", err))
 			adventureResponse.Data.Error = "Invalid Email / Password"
 			adventureResponse.Data.Type = "adventure"
 			adventureResponse.Data.Attributes = nil

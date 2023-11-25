@@ -19,8 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AdventureService_GetAdventure_FullMethodName = "/AdventureService/GetAdventure"
-	AdventureService_PutAdventure_FullMethodName = "/AdventureService/PutAdventure"
+	AdventureService_GetAdventure_FullMethodName     = "/AdventureService/GetAdventure"
+	AdventureService_GetAllAdventures_FullMethodName = "/AdventureService/GetAllAdventures"
+	AdventureService_CreateAdventure_FullMethodName  = "/AdventureService/CreateAdventure"
+	AdventureService_UpdateAdventure_FullMethodName  = "/AdventureService/UpdateAdventure"
+	AdventureService_DeleteAdventure_FullMethodName  = "/AdventureService/DeleteAdventure"
 )
 
 // AdventureServiceClient is the client API for AdventureService service.
@@ -28,7 +31,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdventureServiceClient interface {
 	GetAdventure(ctx context.Context, in *GetAdventureRequest, opts ...grpc.CallOption) (*GetAdventureResponse, error)
-	PutAdventure(ctx context.Context, in *PutAdventureRequest, opts ...grpc.CallOption) (*PutAdventureResponse, error)
+	GetAllAdventures(ctx context.Context, in *GetAllAdventuresRequest, opts ...grpc.CallOption) (*GetAllAdventuresResponse, error)
+	CreateAdventure(ctx context.Context, in *CreateAdventureRequest, opts ...grpc.CallOption) (*CreateAdventureResponse, error)
+	UpdateAdventure(ctx context.Context, in *UpdateAdventureRequest, opts ...grpc.CallOption) (*UpdateAdventureResponse, error)
+	DeleteAdventure(ctx context.Context, in *DeleteAdventureRequest, opts ...grpc.CallOption) (*DeleteAdventureResponse, error)
 }
 
 type adventureServiceClient struct {
@@ -48,9 +54,36 @@ func (c *adventureServiceClient) GetAdventure(ctx context.Context, in *GetAdvent
 	return out, nil
 }
 
-func (c *adventureServiceClient) PutAdventure(ctx context.Context, in *PutAdventureRequest, opts ...grpc.CallOption) (*PutAdventureResponse, error) {
-	out := new(PutAdventureResponse)
-	err := c.cc.Invoke(ctx, AdventureService_PutAdventure_FullMethodName, in, out, opts...)
+func (c *adventureServiceClient) GetAllAdventures(ctx context.Context, in *GetAllAdventuresRequest, opts ...grpc.CallOption) (*GetAllAdventuresResponse, error) {
+	out := new(GetAllAdventuresResponse)
+	err := c.cc.Invoke(ctx, AdventureService_GetAllAdventures_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventureServiceClient) CreateAdventure(ctx context.Context, in *CreateAdventureRequest, opts ...grpc.CallOption) (*CreateAdventureResponse, error) {
+	out := new(CreateAdventureResponse)
+	err := c.cc.Invoke(ctx, AdventureService_CreateAdventure_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventureServiceClient) UpdateAdventure(ctx context.Context, in *UpdateAdventureRequest, opts ...grpc.CallOption) (*UpdateAdventureResponse, error) {
+	out := new(UpdateAdventureResponse)
+	err := c.cc.Invoke(ctx, AdventureService_UpdateAdventure_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adventureServiceClient) DeleteAdventure(ctx context.Context, in *DeleteAdventureRequest, opts ...grpc.CallOption) (*DeleteAdventureResponse, error) {
+	out := new(DeleteAdventureResponse)
+	err := c.cc.Invoke(ctx, AdventureService_DeleteAdventure_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +95,10 @@ func (c *adventureServiceClient) PutAdventure(ctx context.Context, in *PutAdvent
 // for forward compatibility
 type AdventureServiceServer interface {
 	GetAdventure(context.Context, *GetAdventureRequest) (*GetAdventureResponse, error)
-	PutAdventure(context.Context, *PutAdventureRequest) (*PutAdventureResponse, error)
+	GetAllAdventures(context.Context, *GetAllAdventuresRequest) (*GetAllAdventuresResponse, error)
+	CreateAdventure(context.Context, *CreateAdventureRequest) (*CreateAdventureResponse, error)
+	UpdateAdventure(context.Context, *UpdateAdventureRequest) (*UpdateAdventureResponse, error)
+	DeleteAdventure(context.Context, *DeleteAdventureRequest) (*DeleteAdventureResponse, error)
 	mustEmbedUnimplementedAdventureServiceServer()
 }
 
@@ -73,8 +109,17 @@ type UnimplementedAdventureServiceServer struct {
 func (UnimplementedAdventureServiceServer) GetAdventure(context.Context, *GetAdventureRequest) (*GetAdventureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAdventure not implemented")
 }
-func (UnimplementedAdventureServiceServer) PutAdventure(context.Context, *PutAdventureRequest) (*PutAdventureResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutAdventure not implemented")
+func (UnimplementedAdventureServiceServer) GetAllAdventures(context.Context, *GetAllAdventuresRequest) (*GetAllAdventuresResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllAdventures not implemented")
+}
+func (UnimplementedAdventureServiceServer) CreateAdventure(context.Context, *CreateAdventureRequest) (*CreateAdventureResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAdventure not implemented")
+}
+func (UnimplementedAdventureServiceServer) UpdateAdventure(context.Context, *UpdateAdventureRequest) (*UpdateAdventureResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAdventure not implemented")
+}
+func (UnimplementedAdventureServiceServer) DeleteAdventure(context.Context, *DeleteAdventureRequest) (*DeleteAdventureResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAdventure not implemented")
 }
 func (UnimplementedAdventureServiceServer) mustEmbedUnimplementedAdventureServiceServer() {}
 
@@ -107,20 +152,74 @@ func _AdventureService_GetAdventure_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AdventureService_PutAdventure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutAdventureRequest)
+func _AdventureService_GetAllAdventures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllAdventuresRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdventureServiceServer).PutAdventure(ctx, in)
+		return srv.(AdventureServiceServer).GetAllAdventures(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AdventureService_PutAdventure_FullMethodName,
+		FullMethod: AdventureService_GetAllAdventures_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdventureServiceServer).PutAdventure(ctx, req.(*PutAdventureRequest))
+		return srv.(AdventureServiceServer).GetAllAdventures(ctx, req.(*GetAllAdventuresRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdventureService_CreateAdventure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAdventureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventureServiceServer).CreateAdventure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdventureService_CreateAdventure_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventureServiceServer).CreateAdventure(ctx, req.(*CreateAdventureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdventureService_UpdateAdventure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAdventureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventureServiceServer).UpdateAdventure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdventureService_UpdateAdventure_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventureServiceServer).UpdateAdventure(ctx, req.(*UpdateAdventureRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AdventureService_DeleteAdventure_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAdventureRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdventureServiceServer).DeleteAdventure(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AdventureService_DeleteAdventure_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdventureServiceServer).DeleteAdventure(ctx, req.(*DeleteAdventureRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -137,8 +236,20 @@ var AdventureService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AdventureService_GetAdventure_Handler,
 		},
 		{
-			MethodName: "PutAdventure",
-			Handler:    _AdventureService_PutAdventure_Handler,
+			MethodName: "GetAllAdventures",
+			Handler:    _AdventureService_GetAllAdventures_Handler,
+		},
+		{
+			MethodName: "CreateAdventure",
+			Handler:    _AdventureService_CreateAdventure_Handler,
+		},
+		{
+			MethodName: "UpdateAdventure",
+			Handler:    _AdventureService_UpdateAdventure_Handler,
+		},
+		{
+			MethodName: "DeleteAdventure",
+			Handler:    _AdventureService_DeleteAdventure_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
