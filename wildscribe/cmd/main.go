@@ -41,7 +41,7 @@ func main() {
 	log.Println("Done!")
 	// User grpc gateway setup
 	log.Println("Setting up User Gateway")
-	userGateway := usergateway.NewUserGateway("https://wildscribe-user-service-97db90e759bf.herokuapp.com")
+	userGateway := usergateway.NewUserGateway("0.0.0.0:8082")
 	log.Println("Done!")
 	// Setup controller for main func
 	log.Println("Setting controller")

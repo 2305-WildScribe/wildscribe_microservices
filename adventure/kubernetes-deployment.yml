@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adventure
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: adventure
+  template:
+    metadata:
+      labels:
+        app: adventure
+    spec:
+      containers:
+      - name: adventure
+        image: steamedmicrobe373/adventure:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8083
