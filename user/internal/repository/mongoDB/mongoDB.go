@@ -6,11 +6,11 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"wildscribe.com/user/internal/config"
 	"wildscribe.com/user/pkg/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Set Database stuct
@@ -59,8 +59,8 @@ func (c *Collection) Get(ctx context.Context, email string) (*model.User, error)
 	filter := bson.D{{Key: "email", Value: email}}
 	err := c.collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
-		log.Printf("MongoDB error: %v\n", err)
-		return nil, err
+		new_error := fmt.Errorf("MongoDB::Create: InsertOne Failed: %w", err)
+		return nil, new_error
 	}
 	return &user, nil
 }
@@ -78,8 +78,12 @@ func (c *Collection) Create(ctx context.Context, user *model.User) error {
 
 // Update an user
 func (c *Collection) Update(ctx context.Context, user *model.User) error {
-
-	filter := bson.D{{Key: "_id", Value: user.User_id}}
+	objId, idErr := primitive.ObjectIDFromHex(user.User_id)
+	if idErr != nil {
+		return fmt.Errorf("MongoDB::Update: Invalid Obj ID: %w", idErr)
+	}
+	user.User_id = ""
+	filter := bson.D{{Key: "_id", Value: objId}}
 	update := bson.D{{Key: "$set", Value: user}}
 	_, err := c.collection.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -92,7 +96,11 @@ func (c *Collection) Update(ctx context.Context, user *model.User) error {
 
 // Delete an user
 func (c *Collection) Delete(ctx context.Context, id string) error {
-	filter := bson.D{{Key: "_id", Value: id}}
+	objId, idErr := primitive.ObjectIDFromHex(id)
+	if idErr != nil {
+		return fmt.Errorf("MongoDB::Delete: Invalid Obj ID: %w", idErr)
+	}
+	filter := bson.D{{Key: "_id", Value: objId}}
 	_, err := c.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)

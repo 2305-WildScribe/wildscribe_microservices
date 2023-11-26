@@ -15,7 +15,7 @@ type adventureRepository interface {
 	GetOne(ctx context.Context, id string) (*model.Adventure, error)
 	GetAll(ctx context.Context, id string) ([]*model.Adventure, error)
 	Create(ctx context.Context, adventure *model.Adventure) error
-	Update(ctx context.Context, adventure *model.Adventure) error
+	Update(ctx context.Context, adventure *model.Adventure) (*model.Adventure, error)
 	Delete(ctx context.Context, id string) error
 }
 
@@ -61,20 +61,20 @@ func (c *Controller) Create(ctx context.Context, adventure *model.Adventure) (*m
 
 // Updates an adventure, returns adventure if success
 func (c *Controller) Update(ctx context.Context, adventure *model.Adventure) (*model.Adventure, error) {
-	err := c.repo.Update(ctx, adventure)
+	updated_adventure, err := c.repo.Update(ctx, adventure)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Update: Failed to update adventure: %w", err)
 		return nil, new_error
 	}
-	return adventure, nil
+	return updated_adventure, nil
 }
 
 // Deletes an adventure, returns nil if success
-func (c *Controller) Delete(ctx context.Context, adventure_id string) error {
+func (c *Controller) Delete(ctx context.Context, adventure_id string) (string, error) {
 	err := c.repo.Delete(ctx, adventure_id)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Delete: Failed to Delete adventure: %w", err)
-		return new_error
+		return "Adventure not found", new_error
 	}
-	return nil
+	return adventure_id, nil
 }

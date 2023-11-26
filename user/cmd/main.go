@@ -4,21 +4,20 @@ import (
 	"fmt"
 	"net"
 
-
 	"log"
 	"os"
 
+	"google.golang.org/grpc"
+	"wildscribe.com/gen"
 	"wildscribe.com/user/internal/controller"
 	grpchandler "wildscribe.com/user/internal/handler/grpc"
 	database "wildscribe.com/user/internal/repository/mongoDB"
-	"google.golang.org/grpc"
-	"wildscribe.com/gen"
 )
 
 func main() {
 	var port string
 	var address string
-	log.Println("Starting wildscribe adventure service...")
+	log.Println("Starting wildscribe user service...")
 	env := os.Getenv("ENV")
 
 	if env == "PROD" {

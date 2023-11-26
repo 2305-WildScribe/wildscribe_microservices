@@ -97,22 +97,32 @@ func (c *Collection) Create(ctx context.Context, adventure *model.Adventure) err
 }
 
 // Update an adventure
-func (c *Collection) Update(ctx context.Context, adventure *model.Adventure) error {
-
-	filter := bson.D{{Key: "_id", Value: adventure.Adventure_id}}
-	update := bson.D{{Key: "$set", Value: adventure}}
-	_, err := c.collection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		new_error := fmt.Errorf("MongoDB::Update: UpdateOne Failed: %w", err)
-		return new_error
+func (c *Collection) Update(ctx context.Context, adventure *model.Adventure) (*model.Adventure, error) {
+	objId, idErr := primitive.ObjectIDFromHex(adventure.Adventure_id)
+	if idErr != nil {
+		return nil, fmt.Errorf("MongoDB::Update: Invalid Obj ID: %w", idErr)
 	}
+	// Set adventure_id to "" to avoid overwrite ID errors.
+	adventure.Adventure_id = ""
+	filter := bson.D{{Key: "_id", Value: objId}}
+	update := bson.D{{Key: "$set", Value: adventure}}
 
-	return nil
+	var updatedAdventure model.Adventure
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+	result := c.collection.FindOneAndUpdate(ctx, filter, update, opts)
+	if err := result.Decode(&updatedAdventure); err != nil {
+		return nil, fmt.Errorf("MongoDB::Update: FindOneAndUpdate Failed: %w", err)
+	}
+	return &updatedAdventure, nil
 }
 
 // Delete an adventure
 func (c *Collection) Delete(ctx context.Context, id string) error {
-	filter := bson.D{{Key: "_id", Value: id}}
+	objId, idErr := primitive.ObjectIDFromHex(id)
+	if idErr != nil {
+		return fmt.Errorf("MongoDB::Delete: Invalid Obj ID: %w", idErr)
+	}
+	filter := bson.D{{Key: "_id", Value: objId}}
 	_, err := c.collection.DeleteOne(ctx, filter)
 	if err != nil {
 		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)

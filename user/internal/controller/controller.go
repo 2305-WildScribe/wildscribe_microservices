@@ -30,7 +30,6 @@ func New(repo userRepository) *Controller {
 }
 
 func (c *Controller) Login(ctx context.Context, email string, password string) (*model.User, error) {
-
 	// Sets email and password variables, password must be []byte for bcrypt use
 	byte_password := []byte(password)
 
@@ -41,7 +40,7 @@ func (c *Controller) Login(ctx context.Context, email string, password string) (
 	}
 
 	if !bcrypt_middleware.ComparePasswords(user.Password, byte_password) {
-		new_error := fmt.Errorf("Controller::Login: failed to compare passwords %w", err)
+		new_error := fmt.Errorf("Controller::Login: failed to compare passwords")
 		return nil, new_error
 	}
 
@@ -58,6 +57,16 @@ func (c *Controller) Validate(ctx context.Context, user_id string) (*model.User,
 }
 
 func (c *Controller) Create(ctx context.Context, user *model.User) (*model.User, error) {
+	// Check if email exist before creating user
+	existingUser, check_err := c.repo.Get(ctx, user.Email)
+	if check_err == nil && existingUser != nil {
+		// User with the same email already exists
+		return nil, fmt.Errorf("Controller::Create: email '%s' is already taken", user.Email)
+	}
+	// Convert password to []byte for bcrypt
+	byte_password := []byte(user.Password)
+	// Save new HashandSalted password
+	user.Password = bcrypt_middleware.HashAndSalt(byte_password)
 	err := c.repo.Create(ctx, user)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Create: failed to create user %w", err)
@@ -67,11 +76,14 @@ func (c *Controller) Create(ctx context.Context, user *model.User) (*model.User,
 }
 
 func (c *Controller) Update(ctx context.Context, user *model.User) (*model.User, error) {
+	byte_password := []byte(user.Password)
+	user.Password = bcrypt_middleware.HashAndSalt(byte_password)
 	err := c.repo.Update(ctx, user)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Update: failed to update user %w", err)
 		return nil, new_error
 	}
+	user.Password = ""
 	return user, err
 }
 
@@ -83,5 +95,3 @@ func (c *Controller) Delete(ctx context.Context, user_id string) error {
 	}
 	return err
 }
-
-

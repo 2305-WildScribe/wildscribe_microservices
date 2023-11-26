@@ -64,11 +64,11 @@ func (h *Handler) UpdateAdventure(ctx context.Context, req *gen.UpdateAdventureR
 }
 
 func (h *Handler) DeleteAdventure(ctx context.Context, req *gen.DeleteAdventureRequest) (*gen.DeleteAdventureResponse, error) {
-	err := h.svc.Delete(ctx, req.AdventureId)
+	adventure_id, err := h.svc.Delete(ctx, req.AdventureId)
 	if err != nil {
 		new_error := fmt.Errorf("grpc_Handler::DeleteAdventures: Failed to Delete adventure: %w", err)
 		log.Println(new_error)
 		return nil, new_error
 	}
-	return &gen.DeleteAdventureResponse{AdventureId: req.AdventureId}, nil
+	return &gen.DeleteAdventureResponse{AdventureId: adventure_id}, nil
 }

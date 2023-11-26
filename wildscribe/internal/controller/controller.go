@@ -103,7 +103,6 @@ func (c *Controller) LoginUser(ctx context.Context, user *usermodel.User) (*user
 		log.Println(new_error)
 		return user, err
 	}
-	log.Println(user)
 	return user, err
 }
 
@@ -119,13 +118,14 @@ func (c *Controller) ValidateUser(ctx context.Context, user_id string) (string, 
 }
 
 func (c *Controller) CreateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error) {
-	user, err := c.userGateway.CreateUser(ctx, user)
+	resp_user, err := c.userGateway.CreateUser(ctx, user)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::CreateUser: Error fetching User: %w", err)
 		log.Println(new_error)
 		return user, err
 	}
-	return user, err
+	resp_user.Password = ""
+	return resp_user, err
 }
 
 func (c *Controller) UpdateUser(ctx context.Context, user *usermodel.User) (*usermodel.User, error) {
@@ -139,7 +139,6 @@ func (c *Controller) UpdateUser(ctx context.Context, user *usermodel.User) (*use
 }
 
 func (c *Controller) DeleteUser(ctx context.Context, user_id string) (string, error) {
-	var user string
 	user, err := c.userGateway.DeleteUser(ctx, user_id)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::DeleteUser: Error fetching User: %w", err)
@@ -148,4 +147,3 @@ func (c *Controller) DeleteUser(ctx context.Context, user_id string) (string, er
 	}
 	return user, err
 }
-
