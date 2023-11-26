@@ -4,13 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"wildscribe.com/user/pkg/model"
 	"wildscribe.com/gen"
 	"wildscribe.com/internal/grpcutil"
+	"wildscribe.com/user/pkg/model"
 )
 
 type Gateway struct {
-	address         string
+	address    string
 	userClient gen.UserServiceClient
 }
 
@@ -32,6 +32,8 @@ func (g *Gateway) LoginUser(ctx context.Context, user *model.User) (*model.User,
 	}
 	resp_user := model.UserFromProto(resp.User)
 	log.Println(resp_user)
+	resp_user.Email = ""
+	resp_user.Password = ""
 	return resp_user, nil
 }
 

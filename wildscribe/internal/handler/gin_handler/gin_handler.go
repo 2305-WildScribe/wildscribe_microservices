@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	// "wildscribe.com/user/pkg/model"
 	"wildscribe.com/wildscribe/internal/controller"
 	"wildscribe.com/wildscribe/internal/request"
 	"wildscribe.com/wildscribe/internal/response"
@@ -30,12 +31,10 @@ func (h *GinHandler) LoginUser() gin.HandlerFunc {
 		defer cancel()
 
 		var userRequest request.UserRequest
-		var userResponse response.UserResponse
 
 		// Binds http request to requestBody
 		if err := c.ShouldBindJSON(&userRequest); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
 		}
 		user := userRequest.Data.Attributes.ToUser()
 		resp_user, err := h.ctrl.LoginUser(ctx, user)
@@ -46,10 +45,8 @@ func (h *GinHandler) LoginUser() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, response)
 			return
 		}
-		log.Println(resp_user)
-		userResponse.Data.Type = "user"
-		userResponse.Data.Attributes.User_id = resp_user.User_id
-		c.JSON(http.StatusOK, userResponse)
+		response := response.NewUserSuccessResponse(resp_user)
+		c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -59,7 +56,6 @@ func (h *GinHandler) CreateUser() gin.HandlerFunc {
 		defer cancel()
 
 		var userRequest request.UserRequest
-		var userResponse response.UserResponse
 
 		// Binds http request to requestBody
 		if err := c.ShouldBindJSON(&userRequest); err != nil {
@@ -75,10 +71,8 @@ func (h *GinHandler) CreateUser() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, response)
 			return
 		}
-		log.Println(user)
-		userResponse.Data.Type = "user"
-		userResponse.Data.Attributes.User_id = resp_user.User_id
-		c.JSON(http.StatusOK, userResponse)
+		response := response.NewUserSuccessResponse(resp_user)
+		c.JSON(http.StatusOK, response)
 	}
 }
 
@@ -119,7 +113,7 @@ func (h *GinHandler) DeleteUser() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, response)
 			return
 		}
-		user, err := h.ctrl.DeleteUser(ctx, userRequest.Data.Attributes.User_id)
+		_, err := h.ctrl.DeleteUser(ctx, userRequest.Data.Attributes.User_id)
 		if err != nil {
 			new_error := fmt.Errorf("GinHandler::DeleteUser: Error fetching User: %w", err)
 			log.Println(new_error)
@@ -127,13 +121,9 @@ func (h *GinHandler) DeleteUser() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, response)
 			return
 		}
-		var userResponse response.UserResponse
-		userResponse.Data.Type = "user"
-		userResponse.Data.Attributes.User_id = user
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, nil)
 	}
 }
-		
 
 // GetAdventure handles POST /adventure requests.
 func (h *GinHandler) GetAnAdventure() gin.HandlerFunc {
