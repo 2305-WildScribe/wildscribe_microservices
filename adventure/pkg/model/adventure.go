@@ -10,7 +10,7 @@ type Adventure struct {
 	Hours_slept          int32   `json:"hours_slept,omitempty"`
 	Sleep_stress_notes   string  `json:"sleep_stress_notes,omitempty"`
 	Hydration            string  `json:"hydration,omitempty"`
-	Diet                 string  `json:"diet,omitempty"`
+	Diet                 int32   `json:"diet,omitempty"`
 	Diet_hydration_notes string  `json:"diet_hydration_notes,omitempty"`
 	Beta_notes           string  `json:"beta_notes,omitempty"`
 	Lat                  float32 `json:"lat,omitempty"`

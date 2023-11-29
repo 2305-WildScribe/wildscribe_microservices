@@ -21,7 +21,7 @@ type Attributes struct {
 	Hours_slept          int     `json:"hours_slept,omitempty"`
 	Sleep_stress_notes   string  `json:"sleep_stress_notes,omitempty"`
 	Hydration            string  `json:"hydration,omitempty"`
-	Diet                 string  `json:"diet,omitempty"`
+	Diet                 int     `json:"diet,omitempty"`
 	Diet_hydration_notes string  `json:"diet_hydration_notes,omitempty"`
 	Beta_notes           string  `json:"beta_notes,omitempty"`
 	Lat                  float32 `json:"lat,omitempty"`
@@ -40,7 +40,7 @@ func (a *Attributes) ToAdventure() *model.Adventure {
 		Hours_slept:          int32(a.Hours_slept),
 		Sleep_stress_notes:   a.Sleep_stress_notes,
 		Hydration:            a.Hydration,
-		Diet:                 a.Diet,
+		Diet:                 int32(a.Diet),
 		Diet_hydration_notes: a.Diet_hydration_notes,
 		Beta_notes:           a.Beta_notes,
 		Lat:                  a.Lat,

@@ -22,14 +22,9 @@ func EnvMongoURI() string {
 }
 
 func EnvMongoDB() string {
-	env := os.Getenv("ENV")
-	if env == "PROD" {
-		uri := "MONGOURI"
-		return uri
-	}
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Printf("error: %v\n", err)
-	}
 	return os.Getenv("DATABASE")
+}
+
+func EnvMongoColleciton() string {
+	return os.Getenv("COLLECTION")
 }

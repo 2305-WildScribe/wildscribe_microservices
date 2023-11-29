@@ -46,7 +46,7 @@ func ConnectDB() *Database {
 // Sets the collection to "metadata"
 func NewCollection(db *Database) *Collection {
 	return &Collection{
-		collection: db.db.Database("golangAPI").Collection("users"),
+		collection: db.db.Database(config.EnvMongoDB()).Collection(config.EnvMongoColleciton()),
 	}
 }
 

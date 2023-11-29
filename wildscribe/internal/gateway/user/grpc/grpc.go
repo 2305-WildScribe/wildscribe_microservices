@@ -16,9 +16,9 @@ type Gateway struct {
 
 // New creates a new gRPC gateway for a user service.
 func NewUserGateway(addr string) *Gateway {
-	conn, err := grpcutil.ServiceConnection(context.Background(), "0.0.0.0:8082")
+	conn, err := grpcutil.ServiceConnection(context.Background(), addr)
 	if err != nil {
-		log.Fatalf("Failed to connect to User service: %v", err)
+		log.Printf("Failed to connect to User service: %v", err)
 	}
 	return &Gateway{addr, gen.NewUserServiceClient(conn)}
 }

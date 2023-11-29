@@ -3,13 +3,11 @@ package grpc
 import (
 	"context"
 	"fmt"
+
 	"log"
-	// "google.golang.org/grpc"
-	// "go.mongodb.org/mongo-driver/mongo/address"
 	"wildscribe.com/adventure/pkg/model"
 	"wildscribe.com/gen"
 	"wildscribe.com/internal/grpcutil"
-	// "wildscribe.com/pkg/discovery"
 )
 
 type Gateway struct {
@@ -20,15 +18,16 @@ type Gateway struct {
 // New creates a new gRPC gateway for a movie metadata
 // service.
 func NewAdventureGateway(addr string) *Gateway {
-	conn, err := grpcutil.ServiceConnection(context.Background(), "0.0.0.0:8083")
+	conn, err := grpcutil.ServiceConnection(context.Background(), addr)
 	if err != nil {
-		log.Fatalf("Failed to connect to Adventure service: %v", err)
+		log.Printf("Failed to connect to Adventure service: %v", err)
 	}
 	return &Gateway{addr, gen.NewAdventureServiceClient(conn)}
 }
 
 // Get returns movie metadata by a movie id.
 func (g *Gateway) GetAdventure(ctx context.Context, adventure_id string) (*model.Adventure, error) {
+
 	resp, err := g.adventureClient.GetAdventure(ctx, &gen.GetAdventureRequest{AdventureId: adventure_id})
 	if err != nil {
 		new_error := fmt.Errorf("AdvGrpcGateway::GetAdventure: Error getting adventure: %w", err)
