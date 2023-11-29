@@ -45,7 +45,7 @@ func ConnectDB() *Database {
 // Sets the collection to "adventures"
 func NewCollection(database *Database) *Collection {
 	return &Collection{
-		collection: database.mongoClient.Database("golangAPI").Collection("adventures"),
+		collection: database.mongoClient.Database(config.EnvMongoDB()).Collection(config.EnvMongoColleciton()),
 	}
 }
 

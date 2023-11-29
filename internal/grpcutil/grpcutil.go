@@ -10,11 +10,20 @@ import (
 )
 
 // ServiceConnection connects to a fixed URL for the specified service.
-func ServiceConnection(ctx context.Context, serviceAddress string) (*grpc.ClientConn, error) {
+func ServiceConnection(ctx context.Context, host string) (*grpc.ClientConn, error) {
+	var opts []grpc.DialOption
+	if host != "" {
+		opts = append(opts, grpc.WithAuthority(host))
+	}
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// if insecure {
+	// 	opts = append(opts, grpc.WithInsecure())
+	// }
 	// Specify the fixed URL for the service
-	log.Printf("GrpcUtil::ServiceConnection: Connected to %s", serviceAddress)
-	client, err := grpc.Dial(serviceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	log.Println(fmt.Errorf("GrpcUtil::ServiceConnection: Error connecting to service: %w", err))
-	log.Println(client)
+	client, err := grpc.Dial(host, opts...)
+	if err != nil {
+		log.Println(fmt.Errorf("GrpcUtil::ServiceConnection: Error connecting to service: %w", err))
+	}
+	log.Printf("GrpcUtil::ServiceConnection: Connected to %s", host)
 	return client, err
 }

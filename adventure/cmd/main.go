@@ -21,10 +21,10 @@ func main() {
 
 	if env == "PROD" {
 		port = os.Getenv("PORT")
-		address = "0.0.0.0"
+		address = os.Getenv("ADDRESS")
 	} else {
 		port = "8083"
-		address = "0.0.0.0"
+		address = "localhost"
 	}
 
 	route := fmt.Sprintf("%s:%s", address, port)

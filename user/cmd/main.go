@@ -22,7 +22,7 @@ func main() {
 
 	if env == "PROD" {
 		port = os.Getenv("PORT")
-		address = "0.0.0.0"
+		address = os.Getenv("ADDRESS")
 	} else {
 		port = "8082"
 		address = "0.0.0.0"

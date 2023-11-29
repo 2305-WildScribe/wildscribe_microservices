@@ -10,7 +10,7 @@ message Adventure {
     int32 hours_slept = 7;
     string sleep_stress_notes = 8;
     string hydration = 9;
-    string diet= 10;
+    int32 diet= 10;
     string diet_hydration_notes = 11;
     string beta_notes = 12;
     float lon = 13;
