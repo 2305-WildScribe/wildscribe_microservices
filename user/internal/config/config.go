@@ -22,9 +22,17 @@ func EnvMongoURI() string {
 }
 
 func EnvMongoDB() string {
-	return os.Getenv("DATABASE")
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		return os.Getenv("DATABASE")
+	}
+	return "golangAPI"
 }
 
 func EnvMongoColleciton() string {
-	return os.Getenv("COLLECTION")
+	env := os.Getenv("ENV")
+	if env == "PROD" {
+		return os.Getenv("COLLECTION")
+	}
+	return "users"
 }

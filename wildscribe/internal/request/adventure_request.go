@@ -24,8 +24,8 @@ type Attributes struct {
 	Diet                 int     `json:"diet,omitempty"`
 	Diet_hydration_notes string  `json:"diet_hydration_notes,omitempty"`
 	Beta_notes           string  `json:"beta_notes,omitempty"`
-	Lat                  float32 `json:"lat,omitempty"`
-	Lon                  float32 `json:"lon,omitempty"`
+	Lat                  float64 `json:"lat,omitempty"`
+	Lon                  float64 `json:"lon,omitempty"`
 }
 
 func (a *Attributes) ToAdventure() *model.Adventure {
