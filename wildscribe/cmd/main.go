@@ -31,7 +31,7 @@ func main() {
 	} else {
 		port = "8080"
 		address = "0.0.0.0"
-		adventureAddress = "adventure-microservice:8083"
+		adventureAddress = "0.0.0.0:8083"
 		userAddress = "0.0.0.0:8082"
 	}
 

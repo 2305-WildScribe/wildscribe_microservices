@@ -173,7 +173,6 @@ func (h *GinHandler) GetAllAdventures() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, response)
 			return
 		}
-		log.Println(adventures)
 		response := response.NewSuccessResponse(adventures...)
 		c.JSON(http.StatusOK, response)
 	}

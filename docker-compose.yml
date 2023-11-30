@@ -1,0 +1,41 @@
+version: '3'
+services:
+  wildscribe-api:
+    image: wildscribe
+    environment:
+      - ENV=PROD
+      - PORT=8080
+      - ADVENTUREGATEWAY=adventure-microservice:8083
+      - USERGATEWAY=user-microservice:8082
+    ports:
+      - "8080:8080"  # Adjust the ports as needed
+    networks:
+      - wildscribe-network
+
+  adventure-microservice:
+    image: adventure 
+    environment:
+      - ENV=PROD
+      - PORT=8083
+      - MONGOURI=INSERTMONGOURI
+      - DATABASE=golangAPI
+      - COLLECTION=adventures
+
+    networks:
+      - wildscribe-network
+
+  user-microservice:
+    image: user 
+    environment:
+      - ENV=PROD
+      - PORT=8082
+      - MONGOURI=INSERTMONGOURI
+      - DATABASE=golangAPI
+      - COLLECTION=users
+    ports:
+      - "8082:8082"
+    networks:
+      - wildscribe-network
+
+networks:
+  wildscribe-network:

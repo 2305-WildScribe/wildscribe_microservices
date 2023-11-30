@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"wildscribe.com/adventure/pkg/model"
 )
@@ -46,6 +47,7 @@ func (c *Controller) Index(ctx context.Context, user_id string) ([]*model.Advent
 		new_error := fmt.Errorf("Controller::Index: Failed to get adventures: %w", err)
 		return nil, new_error
 	}
+	log.Println(adventures[1])
 	return adventures, nil
 }
 

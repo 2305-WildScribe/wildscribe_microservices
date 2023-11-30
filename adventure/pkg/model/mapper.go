@@ -18,6 +18,8 @@ func AdventureToProto(adventure *Adventure) *gen.Adventure {
 		Diet:               adventure.Diet,
 		DietHydrationNotes: adventure.Diet_hydration_notes,
 		BetaNotes:          adventure.Beta_notes,
+		Lat:                adventure.Lat,
+		Lon:                adventure.Lon,
 	}
 }
 
