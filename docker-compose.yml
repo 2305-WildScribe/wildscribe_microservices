@@ -5,10 +5,10 @@ services:
     deploy:
         resources:
             limits:
-              cpus: "0.50"
+              cpus: "0.10"
               memory: 512M
             reservations:
-              cpus: "0.25"
+              cpus: "0.10"
               memory: 128M
     environment:
       - ENV=PROD
@@ -25,15 +25,15 @@ services:
     deploy:
         resources:
             limits:
-              cpus: "0.50"
+              cpus: "0.10"
               memory: 512M
             reservations:
-              cpus: "0.25"
+              cpus: "0.10"
               memory: 128M
     environment:
       - ENV=PROD
       - PORT=8083
-      - MONGOURI=MONGOURI
+      - MONGOURI=mongouri
       - DATABASE=golangAPI
       - COLLECTION=adventures
 
@@ -45,15 +45,15 @@ services:
     deploy:
         resources:
             limits:
-              cpus: "0.50"
+              cpus: "0.30"
               memory: 512M
             reservations:
-              cpus: "0.25"
+              cpus: "0.30"
               memory: 128M 
     environment:
       - ENV=PROD
       - PORT=8082
-      - MONGOURI=MONGOURI
+      - MONGOURI=mongodb
       - DATABASE=golangAPI
       - COLLECTION=users
 
