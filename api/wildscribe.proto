@@ -13,8 +13,8 @@ message Adventure {
     int32 diet= 10;
     string diet_hydration_notes = 11;
     string beta_notes = 12;
-    float lon = 13;
-    float lat = 14;
+    double lon = 13;
+    double lat = 14;
 }
 
 service AdventureService {

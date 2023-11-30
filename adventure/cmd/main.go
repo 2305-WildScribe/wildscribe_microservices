@@ -24,7 +24,7 @@ func main() {
 		address = os.Getenv("ADDRESS")
 	} else {
 		port = "8083"
-		address = "localhost"
+		address = "0.0.0.0"
 	}
 
 	route := fmt.Sprintf("%s:%s", address, port)

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 
-	// "wildscribe.com/wildscribe/internal/request"
 	"wildscribe.com/adventure/pkg/model"
 )
 

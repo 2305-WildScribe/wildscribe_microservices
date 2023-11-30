@@ -43,8 +43,6 @@ func (g *Gateway) GetAllAdventures(ctx context.Context, user_id string) ([]*mode
 		return nil, new_error
 	}
 	adventures := model.AdventureSliceFromProto(resp.Adventures)
-	log.Println(adventures)
-
 	return adventures, nil
 }
 

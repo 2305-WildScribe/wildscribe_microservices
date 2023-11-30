@@ -31,12 +31,14 @@ func main() {
 	} else {
 		port = "8080"
 		address = "0.0.0.0"
-		adventureAddress = "adventure-microservice:8083"
+		adventureAddress = "0.0.0.0:8083"
 		userAddress = "0.0.0.0:8082"
 	}
 
 	// Adventure grpc gateway setup
 	log.Println("Setting up Adventure Gateway")
+	log.Println(adventureAddress)
+	log.Println(userAddress)
 	adventureGateway := adventuregateway.NewAdventureGateway(adventureAddress)
 	log.Println("Done!")
 	// User grpc gateway setup
@@ -48,14 +50,22 @@ func main() {
 	ctrl := controller.New(adventureGateway, userGateway)
 	log.Println("Done!")
 
-	// Setup Gin router for main controller
 	route := fmt.Sprintf("%s:%s", address, port)
 
 	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
 
+	log.Println("Setting up gin Router")
 	router := gin.Default()
-	router.Use(cors.Default())
+	log.Println("Done!")
+
+	log.Println("Enabling Http2")
 	router.UseH2C = true
+	log.Println("Done!")
+
+	log.Println("Applying CORS Settings")
+	router.Use(cors.Default())
+	log.Println("Done!")
+
 	log.Println("Setting handler")
 	handler := gin_handler.NewGinHandler(ctrl)
 	log.Println("Done!")
