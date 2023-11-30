@@ -1,7 +1,15 @@
 version: '3'
 services:
   wildscribe-api:
-    image: wildscribe
+    image: wildscribe 
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 512M
+            reservations:
+              cpus: "0.25"
+              memory: 128M
     environment:
       - ENV=PROD
       - PORT=8080
@@ -14,10 +22,18 @@ services:
 
   adventure-microservice:
     image: adventure 
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 512M
+            reservations:
+              cpus: "0.25"
+              memory: 128M
     environment:
       - ENV=PROD
       - PORT=8083
-      - MONGOURI=INSERTMONGOURI
+      - MONGOURI=MONGOURI
       - DATABASE=golangAPI
       - COLLECTION=adventures
 
@@ -25,15 +41,22 @@ services:
       - wildscribe-network
 
   user-microservice:
-    image: user 
+    image: user
+    deploy:
+        resources:
+            limits:
+              cpus: "0.50"
+              memory: 512M
+            reservations:
+              cpus: "0.25"
+              memory: 128M 
     environment:
       - ENV=PROD
       - PORT=8082
-      - MONGOURI=INSERTMONGOURI
+      - MONGOURI=MONGOURI
       - DATABASE=golangAPI
       - COLLECTION=users
-    ports:
-      - "8082:8082"
+
     networks:
       - wildscribe-network
 
