@@ -1,5 +1,7 @@
 from locust import HttpUser, task, between
 import random
+import logging
+# from faker import Faker
 
 
 
@@ -45,7 +47,7 @@ class User(HttpUser):
         if self.user_id is None:
             self.LoginUser()
 
-        endpoint = "/adventures"
+        endpoint = "/user/adventures"
 
         payload = { 
                     "data":{
@@ -89,8 +91,8 @@ class User(HttpUser):
         with self.client.post(endpoint, json=payload, headers=headers, catch_response=True) as response:
             if response.elapsed.total_seconds() > 1.0:
                 response.failure(f"Request took to long: {response.elapsed.total_seconds()}")
-            elif response.status_code == 200:
-                self.adventure_id = response.json()["data"]["attributes"][0]["adventure_id"]
+            elif response.status_code == 201:
+                self.adventure_id = response.json()["data"]["attributes"]["adventure_id"]
                 response.success()
             elif response.status_code != 200:
                 response.failure(f"Request has diffrent status code: {response.status_code}")
@@ -121,7 +123,7 @@ class User(HttpUser):
                 }
         headers = { "Content-Type": "application/json "}
 
-        with self.client.patch(endpoint, json=payload, headers=headers, catch_response=True) as response:
+        with self.client.put(endpoint, json=payload, headers=headers, catch_response=True) as response:
             if response.elapsed.total_seconds() > 1.0:
                 response.failure(f"Request took to long: {response.elapsed.total_seconds()}")
             elif response.status_code == 200:
@@ -129,7 +131,7 @@ class User(HttpUser):
             elif response.status_code == 500:
                 response.success()
             else: 
-                response.failure(f"Request failed : {response.json()}")
+                response.failure(f"Request failed : {response.text}")
     @task(2)
     def DeleteAdventure(self):
         if self.adventure_id is None:
