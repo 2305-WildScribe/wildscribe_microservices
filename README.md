@@ -64,6 +64,7 @@ Follow these steps to install Go on your macOS system:
 
 ### How to Install the Project
 
+- Ensure both Go and Docker are installed
 - Fork and clone this repo
 - Navigate to the main folder and run the command ```docker-compose up``` in your terminal
 - This should build a docker container for the main service as well as each microservice hosted in the app
