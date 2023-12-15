@@ -33,7 +33,7 @@ services:
     environment:
       - ENV=PROD
       - PORT=8083
-      - MONGOURI=mongouri
+      - MONGOURI=mongodb+srv://Kazah:MongoPassword@wildscribe-be.ohowhmj.mongodb.net/?retryWrites=true&w=majority
       - DATABASE=golangAPI
       - COLLECTION=adventures
 
@@ -53,7 +53,7 @@ services:
     environment:
       - ENV=PROD
       - PORT=8082
-      - MONGOURI=mongodb
+      - MONGOURI=mongodb+srv://Kazah:MongoPassword@wildscribe-be.ohowhmj.mongodb.net/?retryWrites=true&w=majority
       - DATABASE=golangAPI
       - COLLECTION=users
 
