@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: golang:latest
+
+    working_directory: /go/src/github.com/2305-WildScribe/wildscribe_microservices/src
+
+    steps:
+      - checkout
+
+      - run:
+          name: Setup Go
+          command: go get -t -v ./...
+
+      - run:
+          name: Run Tests
+          command: go test -v ./...
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
