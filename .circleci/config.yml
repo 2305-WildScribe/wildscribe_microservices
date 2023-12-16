@@ -7,16 +7,9 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+      - run: go build -o main.exe $(go list ./wildscribe/cmd/...)
       - run: docker build -t wildscribe -f wildscribe/Dockerfile .
-      - run:
-          name: Install Docker Compose
-          command: |
-            sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-      - run:
-          name: Build and Test
-          command: |
-            docker-compose up --build -d
+
 
 workflows:
   version: 2
