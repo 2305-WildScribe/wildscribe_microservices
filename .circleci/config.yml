@@ -12,13 +12,13 @@ jobs:
           command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
 
       - run:
-          name: Build Docker Image
+          name: Build Wildscribe Docker Image
           command: docker build -t wildscribe -f wildscribe/Dockerfile .
       - run:
-          name: Tag Docker Image for Azure Container Registry
+          name: Tag Wildscribe Docker Image for Azure Container Registry
           command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
       - run:
-          name: Push Docker Image to Azure Container Registry
+          name: Push Wildscribe Docker Image to Azure Container Registry
           command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
 
 
@@ -26,10 +26,10 @@ jobs:
           name: Build Adventure Docker Image
           command: docker build -t adventure -f adventure/Dockerfile .
       - run:
-          name: Tag Docker Image for Azure Container Registry
+          name: Tag Adventure Docker Image for Azure Container Registry
           command: docker tag adventure "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
       - run:
-          name: Push Docker Image to Azure Container Registry
+          name: Push Adventure Docker Image to Azure Container Registry
           command: docker push "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
 
 
@@ -37,10 +37,10 @@ jobs:
           name: Build User Docker Image
           command: docker build -t user -f user/Dockerfile .
       - run:
-          name: Tag Docker Image for Azure Container Registry
+          name: Tag User Docker Image for Azure Container Registry
           command: docker tag user "${AZURE_ACR_LOGIN_SERVER}/user:build"
       - run:
-          name: Push Docker Image to Azure Container Registry
+          name: Push User Docker Image to Azure Container Registry
           command: docker push "${AZURE_ACR_LOGIN_SERVER}/user:build"
           
 workflows:
