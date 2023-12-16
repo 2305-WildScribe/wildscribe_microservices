@@ -1,6 +1,8 @@
 FROM golang:1.21.3-alpine as builder
 
 COPY go.mod go.sum ./
+ENV GO111MODULE=on
+RUN go mod download
 
 WORKDIR /wildscribe
 COPY ./wildscribe .
