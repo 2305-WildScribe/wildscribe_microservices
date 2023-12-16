@@ -18,10 +18,10 @@ jobs:
           command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
       - run:
           name: Tag Docker Image for Azure Container Registry
-          command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:${CIRCLE_SHA1}"
+          command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
       - run:
           name: Push Docker Image to Azure Container Registry
-          command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:${CIRCLE_SHA1}"
+          command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
           
 workflows:
   version: 2
