@@ -7,8 +7,22 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+
       - run: docker build -t wildscribe -f wildscribe/Dockerfile .
 
+      - run:
+          name: Build Docker Image
+          command: docker build -t wildscribe -f wildscribe/Dockerfile .
+      - run:
+          name: Authenticate with Azure Container Registry
+          command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
+      - run:
+          name: Tag Docker Image for Azure Container Registry
+          command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:${CIRCLE_SHA1}"
+      - run:
+          name: Push Docker Image to Azure Container Registry
+          command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:${CIRCLE_SHA1}"
+          
 workflows:
   version: 2
   build_and_test:
