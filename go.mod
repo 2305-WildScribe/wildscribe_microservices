@@ -1,6 +1,6 @@
 module wildscribe.com
 
-go 1.21.3
+go latest
 
 require (
 	github.com/gin-contrib/cors v1.5.0
