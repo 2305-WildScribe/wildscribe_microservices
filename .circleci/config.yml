@@ -1,25 +1,28 @@
 version: 2.1
-
 jobs:
   build:
     docker:
-      - image: golang:latest
-
-    working_directory: /go/src/github.com/2305-WildScribe/wildscribe_microservices/src
-
+      - image: circleci/python:3.7
     steps:
       - checkout
-
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
-          name: Setup Go
-          command: go get -t -v ./...
-
+          name: Install Docker Compose
+          command: |
+            sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
       - run:
-          name: Run Tests
-          command: go test -v ./...
+          name: Build and Test
+          command: |
+            docker-compose up --build -d
 
 workflows:
   version: 2
-  build:
+  build_and_test:
     jobs:
       - build
+    filters:
+        branches:
+            only:
+                - main
