@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main.exe $(go list ./cmd/...)
+RUN go build -o main.exe $(go list ./wildscribe/cmd/...)
 
 # Final stage
 FROM alpine:latest
