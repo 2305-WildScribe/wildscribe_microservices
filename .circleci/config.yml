@@ -7,7 +7,7 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
-      - run: cd /wildscribe
+      - run: ls
       - run: docker build -t wildscribe .
       - run:
           name: Install Docker Compose
