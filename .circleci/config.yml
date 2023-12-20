@@ -1,6 +1,14 @@
 version: 2.1
 jobs:
-
+  test: 
+    docker:
+      - image: circleci/python:3.7
+    steps: 
+      - checkout
+      - run:
+          name: Adventure Test
+          command: go test ./adventure/cmd
+          
   build:
     docker:
       - image: circleci/python:3.7
@@ -18,16 +26,6 @@ jobs:
       - run:
           name: Build User Docker Image
           command: docker build -t user -f user/Dockerfile .
-
-
-  test: 
-    docker:
-      - image: circleci/python:3.7
-    steps: 
-      - checkout
-      - run:
-          name: Adventure Test
-          command: go test ./adventure/cmd
 
   deploy: 
     docker:
