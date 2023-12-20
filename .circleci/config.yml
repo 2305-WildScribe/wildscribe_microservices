@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   test: 
     docker:
-      - image: circleci/golang:1.21.3
+      - image: circleci/python:3.7
     steps: 
       - checkout
       - run:
@@ -61,9 +61,13 @@ jobs:
 
 workflows:
   version: 2
-  build_test:
+  build_test_deploy:
     jobs:
       - test
-      - build
-      - deploy
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
 
