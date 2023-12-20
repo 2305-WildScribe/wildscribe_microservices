@@ -9,12 +9,13 @@ jobs:
           name: Adventure Test
           command: go test ./adventure/cmd
           
-  build:
+  deploy: 
     docker:
       - image: circleci/python:3.7
     steps:
       - checkout
-
+      - setup_remote_docker:
+          version: 19.03.13
       - run:
           name: Build Wildscribe Docker Image
           command: docker build -t wildscribe -f wildscribe/Dockerfile .
@@ -26,14 +27,6 @@ jobs:
       - run:
           name: Build User Docker Image
           command: docker build -t user -f user/Dockerfile .
-
-  deploy: 
-    docker:
-      - image: circleci/python:3.7
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 19.03.13
       - run:
           name: Authenticate with Azure Container Registry
           command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
@@ -61,14 +54,11 @@ jobs:
 
 workflows:
   version: 2
-  build_test_deploy:
+  test_deploy:
     jobs:
       - test
-      - build:
-          requires:
-            - test
       - deploy:
           requires:
-            - build
+            - test
 
 
