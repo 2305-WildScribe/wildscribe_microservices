@@ -1,14 +1,15 @@
 version: 2.1
 jobs:
-
   test: 
+    docker:
+      - image: cimg/go:1.21.3
     steps: 
       - checkout
       - run:
           name: Adventure Test
           command: go test ./adventure/cmd
-
-  build:
+          
+  deploy: 
     docker:
       - image: circleci/python:3.7
     steps:
@@ -16,34 +17,20 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
       - run:
-          name: Authenticate with Azure Container Registry
-          command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
-
-      - run:
           name: Build Wildscribe Docker Image
           command: docker build -t wildscribe -f wildscribe/Dockerfile .
-      - run:
-          name: Tag Wildscribe Docker Image for Azure Container Registry
-          command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
-      - run:
-          name: Push Wildscribe Docker Image to Azure Container Registry
-          command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
-
 
       - run:
           name: Build Adventure Docker Image
           command: docker build -t adventure -f adventure/Dockerfile .
-      - run:
-          name: Tag Adventure Docker Image for Azure Container Registry
-          command: docker tag adventure "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
-      - run:
-          name: Push Adventure Docker Image to Azure Container Registry
-          command: docker push "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
-
 
       - run:
           name: Build User Docker Image
           command: docker build -t user -f user/Dockerfile .
+      - run:
+          name: Authenticate with Azure Container Registry
+          command: echo "${AZURE_ACR_PASSWORD}" | docker login "${AZURE_ACR_LOGIN_SERVER}" -u "${AZURE_ACR_USERNAME}" --password-stdin
+
       - run:
           name: Tag User Docker Image for Azure Container Registry
           command: docker tag user "${AZURE_ACR_LOGIN_SERVER}/user:build"
@@ -51,8 +38,27 @@ jobs:
           name: Push User Docker Image to Azure Container Registry
           command: docker push "${AZURE_ACR_LOGIN_SERVER}/user:build"
           
+      - run:
+          name: Tag Adventure Docker Image for Azure Container Registry
+          command: docker tag adventure "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
+      - run:
+          name: Push Adventure Docker Image to Azure Container Registry
+          command: docker push "${AZURE_ACR_LOGIN_SERVER}/adventure:build"
+
+      - run:
+          name: Tag Wildscribe Docker Image for Azure Container Registry
+          command: docker tag wildscribe "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
+      - run:
+          name: Push Wildscribe Docker Image to Azure Container Registry
+          command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
+
 workflows:
   version: 2
-  build_and_test:
+  test_deploy:
     jobs:
-      - build
+      - test
+      - deploy:
+          requires:
+            - test
+
+
