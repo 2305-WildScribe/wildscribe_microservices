@@ -1,12 +1,15 @@
 package main
 
 import (
+	// External Dependencies
 	"fmt"
 	"google.golang.org/grpc"
+	"gopkg.in/yaml.v3"
 	"log"
 	"net"
 	"os"
 
+	// Internal Dependencies
 	"wildscribe.com/adventure/internal/controller"
 	grpchandler "wildscribe.com/adventure/internal/handler/grpc"
 	database "wildscribe.com/adventure/internal/repository/mongoDB"
@@ -14,21 +17,29 @@ import (
 )
 
 func main() {
-	var port string
-	var address string
-	log.Println("Starting wildscribe adventure service...")
-	env := os.Getenv("ENV")
+	var cfg ServiceConfig
 
+	log.Println("Starting wildscribe adventure service...")
+
+	env := os.Getenv("ENV")
 	if env == "PROD" {
-		port = os.Getenv("PORT")
-		address = os.Getenv("ADDRESS")
+
+		cfg.APIConfig.Port = os.Getenv("PORT")
+		cfg.APIConfig.Address = os.Getenv("ADDRESS")
 	} else {
-		port = "8083"
-		address = "0.0.0.0"
+		config, err := os.Open("configs/base.yaml")
+		if err != nil {
+			panic(err)
+		}
+
+		defer config.Close()
+		if err := yaml.NewDecoder(config).Decode(&cfg); err != nil {
+			panic(err)
+		}
 	}
 
-	route := fmt.Sprintf("%s:%s", address, port)
-	log.Printf("Environment: %s, Address: %s, Port: %s, Route: %s\n", env, address, port, route)
+	route := fmt.Sprintf("%s:%s", cfg.APIConfig.Address, cfg.APIConfig.Port)
+	log.Printf("Environment: %s, Route: %s\n", env, route)
 
 	log.Println("Connecting to MongoDB")
 	db := database.ConnectDB()
