@@ -14,7 +14,7 @@ func EnvMongoURI() string {
 		log.Println(uri)
 		return uri
 	}
-	err := godotenv.Load(".env")
+	err := godotenv.Load("cmd/.env")
 	if err != nil {
 		log.Printf("error: %v\n", err)
 	}

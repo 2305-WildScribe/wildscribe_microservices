@@ -21,7 +21,7 @@ func MockCollection() *Collection {
 func (c *Collection) GetOne(_ context.Context, id string) (*model.Adventure, error) {
 	var adventure model.Adventure
 	adventure.Adventure_id = id
-	adventure.User_id = "652edaa67a75034ea37c6652"
+	adventure.User_id = "652edaa67a75034ea37c6679"
 	adventure.Activity = "Test"
 	return &adventure, nil
 }
@@ -35,8 +35,8 @@ func (c *Collection) Delete(_ context.Context, id string) error {
 	return nil
 }
 
-func (c *Collection) Update(_ context.Context, adventure *model.Adventure) error {
-	return nil
+func (c *Collection) Update(_ context.Context, adventure *model.Adventure) (*model.Adventure, error) {
+	return adventure, nil
 }
 
 func (c *Collection) Create(_ context.Context, adventure *model.Adventure) error {

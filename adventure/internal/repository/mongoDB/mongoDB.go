@@ -54,16 +54,16 @@ var adventure model.Adventure
 
 // Get a single collection from the ID, bind & return adventure model.
 func (c *Collection) GetOne(ctx context.Context, id string) (*model.Adventure, error) {
+	// Checks objId
 	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		new_error := fmt.Errorf("MongoDB::GetOne: Decode objId Failed: %w", err)
-		return nil, new_error
+		return nil, fmt.Errorf("MongoDB::GetOne: Decode objId Failed: %w", err)
 	}
 	filter := bson.D{{Key: "_id", Value: objId}}
+
 	result := c.collection.FindOne(ctx, filter).Decode(&adventure)
 	if result != nil {
-		new_error := fmt.Errorf("MongoDB::GetOne: FindOne Failed: %w", result)
-		return nil, new_error
+		return nil, fmt.Errorf("MongoDB::GetOne: FindOne Failed: %w", result)
 	}
 	return &adventure, nil
 }
@@ -74,13 +74,11 @@ func (c *Collection) GetAll(ctx context.Context, id string) ([]*model.Adventure,
 	filter := bson.D{{Key: "user_id", Value: id}}
 	cursor, err := c.collection.Find(ctx, filter)
 	if err != nil {
-		new_error := fmt.Errorf("MongoDB::GetAll: Find Failed: %w", err)
-		return nil, new_error
+		return nil, fmt.Errorf("MongoDB::GetAll: Find Failed: %w", err)
 	}
 	defer cursor.Close(ctx)
 	if err := cursor.All(ctx, &adventures); err != nil {
-		new_error := fmt.Errorf("MongoDB::GetAll: Cursor Failed: %w", err)
-		return nil, new_error
+		return nil, fmt.Errorf("MongoDB::GetAll: Cursor Failed: %w", err)
 	}
 	return adventures, nil
 }
@@ -89,8 +87,7 @@ func (c *Collection) GetAll(ctx context.Context, id string) ([]*model.Adventure,
 func (c *Collection) Create(ctx context.Context, adventure *model.Adventure) error {
 	result, err := c.collection.InsertOne(ctx, adventure)
 	if err != nil {
-		new_error := fmt.Errorf("MongoDB::Create: InsertOne Failed: %w", err)
-		return new_error
+		return fmt.Errorf("MongoDB::Create: InsertOne Failed: %w", err)
 	}
 	adventure.Adventure_id = result.InsertedID.(primitive.ObjectID).Hex()
 	return err
@@ -125,8 +122,7 @@ func (c *Collection) Delete(ctx context.Context, id string) error {
 	filter := bson.D{{Key: "_id", Value: objId}}
 	_, err := c.collection.DeleteOne(ctx, filter)
 	if err != nil {
-		new_error := fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)
-		return new_error
+		return fmt.Errorf("MongoDB::Delete: DeleteOne failed: %w", err)
 	}
 	return nil
 }
