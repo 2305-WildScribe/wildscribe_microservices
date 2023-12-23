@@ -53,12 +53,14 @@ jobs:
           command: docker push "${AZURE_ACR_LOGIN_SERVER}/wildscribe:build"
 
 workflows:
-  version: 2
-  test_deploy:
+  build:
     jobs:
       - test
       - deploy:
           requires:
             - test
-
+          filters:
+            branches:
+              only:
+                - main
 
