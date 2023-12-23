@@ -68,17 +68,17 @@ func (c *Collection) Get(ctx context.Context, email string) (*model.User, error)
 // Counts user to check if valid user ID
 func (c *Collection) Validate(ctx context.Context, user_id string) (bool, error) {
 
-	filter := bson.M{"user_id": user_id}
+	filter := bson.M{"_id": user_id}
 
 	count, err := c.collection.CountDocuments(ctx, filter)
 	if err != nil {
 		newError := fmt.Errorf("MongoDB::Validate: CountDocuments failed: %w", err)
 		return false, newError
 	}
-	if count == 1 {
-		return true, nil
+	if count != 1 {
+		return false, nil
 	}
-	return false, nil
+	return true, nil
 }
 
 // Create a new user
