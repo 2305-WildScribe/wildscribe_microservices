@@ -14,6 +14,7 @@ var ErrNotFound = errors.New("users not found for a record")
 
 type userRepository interface {
 	Get(ctx context.Context, email string) (*model.User, error)
+	Validate(ctx context.Context, user_id string) (bool, error)
 	Create(ctx context.Context, user *model.User) error
 	Update(ctx context.Context, user *model.User) error
 	Delete(ctx context.Context, user_id string) error
@@ -47,11 +48,11 @@ func (c *Controller) Login(ctx context.Context, email string, password string) (
 	return user, err
 }
 
-func (c *Controller) Validate(ctx context.Context, user_id string) (*model.User, error) {
-	user, err := c.repo.Get(ctx, user_id)
+func (c *Controller) Validate(ctx context.Context, user_id string) (bool, error) {
+	user, err := c.repo.Validate(ctx, user_id)
 	if err != nil {
 		new_error := fmt.Errorf("Controller::Validate: failed to fetch user %w", err)
-		return nil, new_error
+		return false, new_error
 	}
 	return user, err
 }
