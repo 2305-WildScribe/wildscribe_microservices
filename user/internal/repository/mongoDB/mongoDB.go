@@ -66,19 +66,23 @@ func (c *Collection) Get(ctx context.Context, email string) (*model.User, error)
 }
 
 // Counts user to check if valid user ID
-func (c *Collection) Validate(ctx context.Context, user_id string) (bool, error) {
-
-	filter := bson.M{"_id": user_id}
+func (c *Collection) ValidateUser(ctx context.Context, user_id string) error {
+	objId, err := primitive.ObjectIDFromHex(user_id)
+	if err != nil {
+		return fmt.Errorf("MongoDB::GetOne: Decode objId Failed: %w", err)
+	}
+	filter := bson.M{"_id": objId}
 
 	count, err := c.collection.CountDocuments(ctx, filter)
 	if err != nil {
-		newError := fmt.Errorf("MongoDB::Validate: CountDocuments failed: %w", err)
-		return false, newError
+		newError := fmt.Errorf("MongoDB::ValidateUser: CountDocuments failed: %w", err)
+		return newError
 	}
 	if count != 1 {
-		return false, nil
+		newError := fmt.Errorf("MongoDB::ValidateUser: No documents found")
+		return newError
 	}
-	return true, nil
+	return nil
 }
 
 // Create a new user
