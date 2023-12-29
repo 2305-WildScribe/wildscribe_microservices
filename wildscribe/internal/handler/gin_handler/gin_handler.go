@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	// "wildscribe.com/user/pkg/model"
+
 	"wildscribe.com/wildscribe/internal/controller"
 	"wildscribe.com/wildscribe/internal/request"
 	"wildscribe.com/wildscribe/internal/response"
@@ -193,6 +193,14 @@ func (h *GinHandler) CreateAdventure() gin.HandlerFunc {
 		}
 
 		adventure := adventureRequest.Data.Attributes.ToAdventure()
+		_, err := h.ctrl.ValidateUser(ctx, adventure.User_id)
+		if err != nil {
+			new_error := fmt.Errorf("GinHandler::CreateAdventure: Invalid User ID: %w", err)
+			log.Println(new_error)
+			response := response.NewErrorResponse("Invalid User ID")
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
 		createdAdventure, err := h.ctrl.CreateAdventure(ctx, adventure)
 		if err != nil {
 			new_error := fmt.Errorf("GinHandler::CreateAdventure: Error fetching Adventure: %w", err)

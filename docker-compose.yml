@@ -1,6 +1,29 @@
 version: '3'
 services:
+
+  mongodb:
+    image: mongo
+    deploy:
+      resources:
+        limits:
+          cpus: "0.20"
+          memory: 512M
+        reservations:
+          cpus: "0.20"
+          memory: 256M
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+    ports:
+      - "27017:27017" 
+    networks:
+      - wildscribe-network
+
+
   wildscribe-api:
+    build:
+      context: /
+      dockerfile: /wildscribe/Dockerfile
     image: wildscribe 
     deploy:
         resources:
@@ -21,6 +44,9 @@ services:
       - wildscribe-network
 
   adventure-microservice:
+    build:
+      context: /
+      dockerfile: /adventure/Dockerfile
     image: adventure 
     deploy:
         resources:
@@ -33,7 +59,7 @@ services:
     environment:
       - ENV=PROD
       - PORT=8083
-      - MONGOURI=mongodb+srv://Kazah:MongoPassword@wildscribe-be.ohowhmj.mongodb.net/?retryWrites=true&w=majority
+      - MONGOURI=mongodb://admin:adminpassword@mongodb:27017
       - DATABASE=golangAPI
       - COLLECTION=adventures
 
@@ -41,6 +67,9 @@ services:
       - wildscribe-network
 
   user-microservice:
+    build:
+      context: /
+      dockerfile:  /user/Dockerfile
     image: user
     deploy:
         resources:
@@ -53,12 +82,13 @@ services:
     environment:
       - ENV=PROD
       - PORT=8082
-      - MONGOURI=mongodb+srv://Kazah:MongoPassword@wildscribe-be.ohowhmj.mongodb.net/?retryWrites=true&w=majority
+      - MONGOURI=mongodb://admin:adminpassword@mongodb:27017
       - DATABASE=golangAPI
       - COLLECTION=users
 
     networks:
       - wildscribe-network
+
 
 networks:
   wildscribe-network:

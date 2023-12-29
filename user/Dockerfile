@@ -1,4 +1,4 @@
-# Builder stage
+# # Builder stage
 FROM golang:1.21.3-alpine as builder
 
 WORKDIR /user
@@ -12,7 +12,8 @@ RUN go build -o main.exe $(go list ./user/cmd/...)
 # Final stage
 FROM alpine:latest
 
-WORKDIR /app
+
+WORKDIR /user
 COPY --from=builder /user/main.exe .
 
 EXPOSE 8082

@@ -2,10 +2,10 @@ package grpc
 
 import (
 	"context"
-	"log"
 	"fmt"
-	"wildscribe.com/user/internal/controller"
+	"log"
 	"wildscribe.com/gen"
+	"wildscribe.com/user/internal/controller"
 	"wildscribe.com/user/pkg/model"
 )
 
@@ -19,7 +19,7 @@ func New(ctrl *controller.Controller) *Handler {
 }
 
 func (h *Handler) LoginUser(ctx context.Context, req *gen.LoginUserRequest) (*gen.LoginUserResponse, error) {
-	user, err:= h.svc.Login(ctx, req.Email, req.Password)
+	user, err := h.svc.Login(ctx, req.Email, req.Password)
 	if err != nil {
 		new_error := fmt.Errorf("GrpcHandler::LoginUser: failed to fetch user %w", err)
 		log.Println(new_error)
@@ -29,13 +29,18 @@ func (h *Handler) LoginUser(ctx context.Context, req *gen.LoginUserRequest) (*ge
 }
 
 func (h *Handler) ValidateUser(ctx context.Context, req *gen.ValidateUserRequest) (*gen.ValidateUserResponse, error) {
-	user, err := h.svc.Validate(ctx, req.UserId)
+	userBool, err := h.svc.Validate(ctx, req.UserId)
 	if err != nil {
 		new_error := fmt.Errorf("GrpcHandler::ValidateUser: failed to validate user %w", err)
 		log.Println(new_error)
 		return nil, new_error
 	}
-	return &gen.ValidateUserResponse{UserId: user.User_id}, nil
+	if !userBool {
+		new_error := fmt.Errorf("GrpcHandler::ValidateUser: Invalid User ID %w", err)
+		log.Println(new_error)
+		return nil, new_error
+	}
+	return &gen.ValidateUserResponse{UserId: req.UserId}, nil
 }
 
 func (h *Handler) CreateUser(ctx context.Context, req *gen.CreateUserRequest) (*gen.CreateUserResponse, error) {
