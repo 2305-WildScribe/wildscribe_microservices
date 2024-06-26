@@ -4,12 +4,12 @@ import random
 
 
 class User(HttpUser):
-    host = "https://wildscribe.azurewebsites.net/api/v0"
+    host = "http://localhost:8080/api/v0"
     wait_time = between(1, 5)
     weight = 1
 
     def on_start(self):
-        self.login_index = random.randint(1, 4999)
+        self.login_index = random.randint(1, 499)
         self.user_id = None
         self.adventure_id = None
 
