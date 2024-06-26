@@ -1,5 +1,20 @@
-FROM alpine:latest
+# # Builder stage
+FROM golang:1.21.3-alpine as builder
+
 WORKDIR /wildscribe
-COPY main.exe .
-EXPOSE 8080
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN go build -o main.exe $(go list ./wildscribe/cmd/...)
+
+# Final stage
+FROM alpine:latest
+
+
+WORKDIR /wildscribe
+COPY --from=builder /wildscribe/main.exe .
+
+EXPOSE 8082
 CMD ["./main.exe"]

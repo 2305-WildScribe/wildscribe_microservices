@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wildscribe-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: wildscribe
+  template:
+    metadata:
+      labels:
+        app: wildscribe
+    spec:
+      containers:
+      - name: wildscribe-container
+        image: wildscribecr.azurecr.io/wildscribe
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "0.50"
+            memory: "512Mi"
+          requests:
+            cpu: "0.25"
+            memory: "128Mi"
+        env:
+        - name: ENV
+          value: PROD
+        - name: PORT
+          value: "8080"
+        - name: ADVENTUREGATEWAY
+          value: wildscribecr.azurecr.io/adventure:8083
+        - name: USERGATEWAY
+          value: wildscribecr.azurecr.io/user:8082
+
+
