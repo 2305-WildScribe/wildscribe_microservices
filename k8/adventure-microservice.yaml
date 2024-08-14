@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adventure-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adventure-microservice
+  template:
+    metadata:
+      labels:
+        app: adventure-microservice
+    spec:
+      containers:
+        - name: adventure
+          image: 192.168.49.2:65244/adventure 
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "0.10"
+              memory: 512Mi
+            requests:
+              cpu: "0.10"
+              memory: 128Mi
+          env:
+            - name: ENV
+              value: "PROD"
+            - name: PORT
+              value: "8083"
+            - name: MONGOURI
+              value: "mongodb://admin:adminpassword@mongo-db:27017"
+            - name: DATABASE
+              value: "golangAPI"
+            - name: COLLECTION
+              value: "adventures"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adventure-microservice
+spec:
+  selector:
+    app: adventure-microservice
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083

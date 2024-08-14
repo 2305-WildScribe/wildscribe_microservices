@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wildscribe-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wildscribe-api
+  template:
+    metadata:
+      labels:
+        app: wildscribe-api
+    spec:
+      containers:
+        - name: wildscribe
+          image: 192.168.49.2:65244/wildscribe
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "0.10"
+              memory: 512Mi
+            requests:
+              cpu: "0.10"
+              memory: 128Mi
+          env:
+            - name: ENV
+              value: "PROD"
+            - name: PORT
+              value: "8080"
+            - name: ADVENTUREGATEWAY
+              value: "adventure-microservice:8083"
+            - name: USERGATEWAY
+              value: "user-microservice:8082"
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wildscribe-api
+spec:
+  selector:
+    app: wildscribe-api
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

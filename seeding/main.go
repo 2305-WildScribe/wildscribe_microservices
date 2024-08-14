@@ -17,16 +17,17 @@ import (
 )
 
 func main() {
-	var ctx context.Context
+	ctx := context.TODO()
 	// Setup DB connectio
 	db := ConnectDB()
 	// Set User Collection
 	user_c := NewCollection(db, "golangAPI", "users")
 	log.Println("Creating Users")
 	adventure_c := NewCollection(db, "golangAPI", "adventures")
-	// Create 5000 users and insert them into the array
+	// Create 500 users and insert them into the array
 	var user_models []*usermodel.User
-	for i := 0; i < 5000; i++ {
+	for i := 0; i < 500; i++ {
+		fmt.Println(fmt.Sprintf("Creating user %d", i))
 		user_model := CreateUser(i)
 		user_models = append(user_models, user_model)
 	}
@@ -63,7 +64,7 @@ func main() {
 	var adventures []*adventuremodel.Adventure
 	// The first 500 users don't have adventures
 	// For 500 - 2500 users Create 1 adventures (2000 users)
-	for i := 500; i <= 2500 && i < len(users); i++ {
+	for i := 50; i <= 250 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 1; j++ {
 			adventure := CreateAdventure(user)
@@ -71,7 +72,7 @@ func main() {
 		}
 	}
 	// For 2501 through 3500 create 10 adventures (1000 users)
-	for i := 2501; i <= 3500 && i < len(users); i++ {
+	for i := 251; i <= 350 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 10; j++ {
 			adventure := CreateAdventure(user)
@@ -79,7 +80,7 @@ func main() {
 		}
 	}
 	// For 3501 through 4500 create 25 adventures (1000 users)
-	for i := 3501; i <= 4500 && i < len(users); i++ {
+	for i := 351; i <= 450 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 25; j++ {
 			adventure := CreateAdventure(user)
@@ -87,7 +88,7 @@ func main() {
 		}
 	}
 	// For 4501 through 4800 create 50 adventures (300 users)
-	for i := 4501; i <= 4800 && i < len(users); i++ {
+	for i := 451; i <= 480 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 50; j++ {
 			adventure := CreateAdventure(user)
@@ -95,7 +96,7 @@ func main() {
 		}
 	}
 	// For 4801 through 4900 create 100 adventures (100 users)
-	for i := 4801; i <= 4900 && i < len(users); i++ {
+	for i := 481; i <= 490 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 100; j++ {
 			adventure := CreateAdventure(user)
@@ -103,7 +104,7 @@ func main() {
 		}
 	}
 	// for 4901 through 4989 create 1000 adventures (90 users)
-	for i := 4901; i <= 4989 && i < len(users); i++ {
+	for i := 491; i <= 499 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 1000; j++ {
 			adventure := CreateAdventure(user)
@@ -111,7 +112,7 @@ func main() {
 		}
 	}
 	// For 4990 through 5000 create 10000 adventures (10 users)
-	for i := 4990; i <= 4999 && i < len(users); i++ {
+	for i := 499; i <= 500 && i < len(users); i++ {
 		user := users[i]
 		for j := 0; j < 10000; j++ {
 			adventure := CreateAdventure(user)
@@ -144,7 +145,7 @@ type Collection struct {
 
 // Connects to MongoDB
 func ConnectDB() *Database {
-	clientOptions := options.Client().ApplyURI("MONGOURIHERE")
+	clientOptions := options.Client().ApplyURI("mongodb://admin:adminpassword@localhost:27017")
 
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {

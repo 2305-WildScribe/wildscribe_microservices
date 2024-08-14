@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-microservice
+  template:
+    metadata:
+      labels:
+        app: user-microservice
+    spec:
+      containers:
+        - name: user
+          image: 192.168.49.2:65244/user
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: "0.30"
+              memory: 512Mi
+            requests:
+              cpu: "0.30"
+              memory: 128Mi
+          env:
+            - name: ENV
+              value: "PROD"
+            - name: PORT
+              value: "8082"
+            - name: MONGOURI
+              value: "mongodb://admin:adminpassword@mongo-db:27017"
+            - name: DATABASE
+              value: "golangAPI"
+            - name: COLLECTION
+              value: "users"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-microservice
+spec:
+  selector:
+    app: user-microservice
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
